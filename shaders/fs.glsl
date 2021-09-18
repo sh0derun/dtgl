@@ -1,13 +1,15 @@
-#version 410 core
+#version 330 core
 out vec4 FragColor;
   
-in vec4 vertexColor;
+in vec4 outColor;
+in vec2 outTex;
 
 uniform float time;
 uniform vec2 res;
+uniform vec4 col;
+
+uniform sampler2D texture1;
 
 void main() {
-	vec2 uv = gl_FragCoord.xy / res * 2.0 - 1.0;
-	uv.x *= res.x / res.y;
-    FragColor = vec4(uv*100.0,1.0,1.0);
+    FragColor = texture(texture1, outTex)*outColor;
 }

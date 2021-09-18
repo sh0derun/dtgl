@@ -7,13 +7,16 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.stb.STBImage;
 
 public class ModelLoader {
 
-	private List<Integer> vaoList = new ArrayList<Integer>(),
+	public List<Integer> vaoList = new ArrayList<Integer>(),
 						  vboList = new ArrayList<Integer>(),
-						  eboList = new ArrayList<Integer>();
+						  eboList = new ArrayList<Integer>(),
+						  texList = new ArrayList<Integer>();
 
 	public Model load(float[] positions, int[] indices) {
 		int vao = GL30.glGenVertexArrays();
@@ -30,7 +33,42 @@ public class ModelLoader {
 		eboList.add(ebo);
 		GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, intArrayToIntBuffer(indices), GL30.GL_STATIC_DRAW);
 		
-		GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, 0, 0);
+		int posSize = 3, colSize = 4, texSize = 2, vertexSizeBytes = (posSize+colSize+texSize)*Float.BYTES;
+		
+		GL30.glVertexAttribPointer(0, posSize, GL30.GL_FLOAT, false, vertexSizeBytes, 0);
+		GL30.glEnableVertexAttribArray(0);
+		
+		GL30.glVertexAttribPointer(1, colSize, GL30.GL_FLOAT, false, vertexSizeBytes, posSize * Float.BYTES);
+		GL30.glEnableVertexAttribArray(1);
+	   
+		GL30.glVertexAttribPointer(2, 2, GL30.GL_FLOAT, false, vertexSizeBytes, (posSize+colSize) * Float.BYTES);
+		GL30.glEnableVertexAttribArray(2);
+		
+		int tex = GL30.glGenTextures();
+		GL30.glBindTexture(GL30.GL_TEXTURE_2D, tex);
+		System.out.println("text = "+tex);
+		texList.add(tex);
+		
+		IntBuffer width  	 = BufferUtils.createIntBuffer(1),
+				  height 	 = BufferUtils.createIntBuffer(1), 
+				  nrChannels = BufferUtils.createIntBuffer(1);
+		
+		STBImage.stbi_set_flip_vertically_on_load(true);
+		ByteBuffer data = STBImage.stbi_load("res/checker.png", width, height, nrChannels, 0);
+		
+		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_S, GL30.GL_CLAMP_TO_EDGE);	
+		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_T, GL30.GL_CLAMP_TO_EDGE);
+		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_LINEAR);
+		GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_LINEAR);
+		
+		if(data != null) {
+			GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_LUMINANCE, width.get(0), height.get(0), 0,GL30.GL_LUMINANCE, GL30.GL_UNSIGNED_BYTE, data);
+			//GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA8, width.get(0), height.get(0), 0,GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, data);
+			GL30.glGenerateMipmap(GL30.GL_TEXTURE_2D);
+		}
+		
+		STBImage.stbi_image_free(data);
+		
 		GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, 0);
 		GL30.glBindVertexArray(0);
 		
@@ -43,21 +81,21 @@ public class ModelLoader {
 		eboList.forEach(ebo -> GL30.glDeleteFramebuffers(ebo));
 	}
 	
-	public FloatBuffer floatArrayToFloatBuffer(float[] data) {
+	private FloatBuffer floatArrayToFloatBuffer(float[] data) {
 		ByteBuffer buf = ByteBuffer.allocateDirect(data.length * 4);
 		buf.order(ByteOrder.nativeOrder());
 		FloatBuffer buffer = buf.asFloatBuffer();
 		buffer.put(data);
-		buffer.rewind();
+		buffer.flip();
 		return buffer;
 	}
 	
-	public IntBuffer intArrayToIntBuffer(int[] data) {
+	private IntBuffer intArrayToIntBuffer(int[] data) {
 		ByteBuffer buf = ByteBuffer.allocateDirect(data.length * 4);
 		buf.order(ByteOrder.nativeOrder());
 		IntBuffer buffer = buf.asIntBuffer();
 		buffer.put(data);
-		buffer.rewind();
+		buffer.flip();
 		return buffer;
 	}
 

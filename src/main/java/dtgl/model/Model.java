@@ -6,7 +6,6 @@ public class Model {
 	private int vertexCount;
 	
 	public Model(int vao, int vertexCount) {
-		super();
 		this.vao = vao;
 		this.vertexCount = vertexCount;
 	}
