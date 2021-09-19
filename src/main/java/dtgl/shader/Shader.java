@@ -1,7 +1,8 @@
 package dtgl.shader;
 
-import org.lwjgl.opengl.GL30;
+import static org.lwjgl.opengl.GL30.*;
 
+import dtgl.exception.ApplicationRuntimeException;
 import dtgl.math.Mat4;
 import dtgl.math.Vec2;
 import dtgl.math.Vec3;
@@ -12,6 +13,7 @@ public class Shader {
 
 	int programId;
 	String vsPath, fsPath;
+	private static final String NO_UNIFORM_NAME_ERROR = "no uniform name found ";
 
 	public Shader(String vsPath, String fsPath) {
 		this.vsPath = vsPath;
@@ -23,80 +25,92 @@ public class Shader {
 	}
 
 	private int loadShaders(String vsSource, String fsSource) {
-		int programId = GL30.glCreateProgram();
-		int vsId = GL30.glCreateShader(GL30.GL_VERTEX_SHADER);
-		int fsId = GL30.glCreateShader(GL30.GL_FRAGMENT_SHADER);
+		int programId = glCreateProgram();
+		int vsId = glCreateShader(GL_VERTEX_SHADER);
+		int fsId = glCreateShader(GL_FRAGMENT_SHADER);
 		// vertex shader
-		GL30.glShaderSource(vsId, vsSource);
-		GL30.glCompileShader(vsId);
-		int res = GL30.glGetShaderi(vsId, GL30.GL_COMPILE_STATUS);
-		if (res == GL30.GL_FALSE) {
-			String infoLog = GL30.glGetShaderInfoLog(vsId);
+		glShaderSource(vsId, vsSource);
+		glCompileShader(vsId);
+		int res = glGetShaderi(vsId, GL_COMPILE_STATUS);
+		if (res == GL_FALSE) {
+			String infoLog = glGetShaderInfoLog(vsId);
 			System.out.println(infoLog);
 		}
-		GL30.glAttachShader(programId, vsId);
+		glAttachShader(programId, vsId);
 
 		// fragment shader
-		GL30.glShaderSource(fsId, fsSource);
-		GL30.glCompileShader(fsId);
-		res = GL30.glGetShaderi(fsId, GL30.GL_COMPILE_STATUS);
-		if (res == GL30.GL_FALSE) {
-			String infoLog = GL30.glGetShaderInfoLog(fsId);
+		glShaderSource(fsId, fsSource);
+		glCompileShader(fsId);
+		res = glGetShaderi(fsId, GL_COMPILE_STATUS);
+		if (res == GL_FALSE) {
+			String infoLog = glGetShaderInfoLog(fsId);
 			System.out.println(infoLog);
 		}
-		GL30.glAttachShader(programId, fsId);
+		glAttachShader(programId, fsId);
 
-		GL30.glLinkProgram(programId);
-		GL30.glValidateProgram(programId);
+		glLinkProgram(programId);
+		glValidateProgram(programId);
 
-		GL30.glDeleteShader(vsId);
-		GL30.glDeleteShader(fsId);
+		glDeleteShader(vsId);
+		glDeleteShader(fsId);
 
 		return programId;
 	}
 
 	public void setUniformFloat(String name, float x){
-		int location = GL30.glGetUniformLocation(programId, name);
-		assert location != -1 : "no uniform name found !";
-		GL30.glUniform1f(location, x);
+		int location = glGetUniformLocation(programId, name);
+		if(location == -1) {
+			throw new ApplicationRuntimeException(NO_UNIFORM_NAME_ERROR + name);
+		}
+		glUniform1f(location, x);
 	}
 	
 	public void setUniformVec2(String name, Vec2 vec2){
-		int location = GL30.glGetUniformLocation(programId, name);
-		assert location != -1 : "no uniform name found !";
-		GL30.glUniform2fv(location, vec2.getCoords());
+		int location = glGetUniformLocation(programId, name);
+		if(location == -1) {
+			throw new ApplicationRuntimeException(NO_UNIFORM_NAME_ERROR + name);
+		}
+		glUniform2fv(location, vec2.getCoords());
 	}
 	
 	public void setUniformVec3(String name, Vec3 vec3){
-		int location = GL30.glGetUniformLocation(programId, name);
-		assert location != -1 : "no uniform name found !";
-		GL30.glUniform3fv(location, vec3.getCoords());
+		int location = glGetUniformLocation(programId, name);
+		if(location == -1) {
+			throw new ApplicationRuntimeException(NO_UNIFORM_NAME_ERROR + name);
+		}
+		glUniform3fv(location, vec3.getCoords());
 	}
 	
 	public void setUniformVec4(String name, Vec4 vec4){
-		int location = GL30.glGetUniformLocation(programId, name);
-		assert location != -1 : "no uniform name found !";
-		GL30.glUniform4fv(location, vec4.getCoords());
+		int location = glGetUniformLocation(programId, name);
+		if(location == -1) {
+			throw new ApplicationRuntimeException(NO_UNIFORM_NAME_ERROR + name);
+		}
+		glUniform4fv(location, vec4.getCoords());
 	}
 	
 	public void setUniformMat4(String name, Mat4 mat4){
-		int location = GL30.glGetUniformLocation(programId, name);
-		assert location != -1 : "no uniform name found !";
-		GL30.glUniformMatrix4fv(location, false, mat4.getValues());
+		int location = glGetUniformLocation(programId, name);
+		if(location == -1) {
+			throw new ApplicationRuntimeException(NO_UNIFORM_NAME_ERROR + name);
+		}
+		glUniformMatrix4fv(location, false, mat4.getValues());
 	}
 	
 	public void setUniformInt(String name, int i){
-		int location = GL30.glGetUniformLocation(programId, name);
-		assert location != -1 : "no uniform name found !";
-		GL30.glUniform1i(location, i);
+		int location = glGetUniformLocation(programId, name);
+		if(location == -1) {
+			throw new ApplicationRuntimeException(NO_UNIFORM_NAME_ERROR + name);
+		}
+		glUniform1i(location, i);
 	}
 	
 	public void activate() {
-		GL30.glUseProgram(programId);
+		glUseProgram(programId);
 	}
 
 	public void deactivate() {
-		GL30.glUseProgram(0);
+		glUseProgram(0);
 	}
 
 }
