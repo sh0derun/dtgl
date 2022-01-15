@@ -2,6 +2,13 @@ package dtgl.shader;
 
 import static org.lwjgl.opengl.GL30.*;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
+
 import dtgl.exception.ApplicationRuntimeException;
 import dtgl.math.Mat4;
 import dtgl.math.Vec2;
@@ -34,7 +41,7 @@ public class Shader {
 		int res = glGetShaderi(vsId, GL_COMPILE_STATUS);
 		if (res == GL_FALSE) {
 			String infoLog = glGetShaderInfoLog(vsId);
-			System.out.println(infoLog);
+			throw new ApplicationRuntimeException(infoLog);
 		}
 		glAttachShader(programId, vsId);
 
@@ -44,7 +51,7 @@ public class Shader {
 		res = glGetShaderi(fsId, GL_COMPILE_STATUS);
 		if (res == GL_FALSE) {
 			String infoLog = glGetShaderInfoLog(fsId);
-			System.out.println(infoLog);
+			throw new ApplicationRuntimeException(infoLog);
 		}
 		glAttachShader(programId, fsId);
 

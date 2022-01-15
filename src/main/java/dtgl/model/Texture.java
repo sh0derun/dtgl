@@ -15,8 +15,9 @@ public class Texture {
 	private String texturePath;
 	private int width, height;
 	private String uniformName;
+	private int format, internalFormat;
 	
-	public Texture(String texturePath, String uniformName) {
+	public Texture(String texturePath, String uniformName, int format, int internalFormat) {
 		this.id = glGenTextures();
 		if(uniformName.trim().length() == 0) {
 			assert false : "uniform name lenght should be more than 0 !";
@@ -26,6 +27,8 @@ public class Texture {
 		}
 		this.texturePath = texturePath;
 		this.uniformName = uniformName;
+		this.format = format;
+		this.internalFormat = internalFormat;
 	}
 	
 	public void bindTexture() {
@@ -43,7 +46,7 @@ public class Texture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 	}
 	
-	public void loadTexture(int internalFormat, int format) {
+	public void loadTexture() {
 		IntBuffer w = BufferUtils.createIntBuffer(1);
 		IntBuffer h = BufferUtils.createIntBuffer(1);
 		IntBuffer nbChannels = BufferUtils.createIntBuffer(1);
@@ -113,7 +116,21 @@ public class Texture {
 			assert false : "uniform name lenght should be more than 0 !";
 		}
 	}
-	
-	
+
+	public int getFormat() {
+		return format;
+	}
+
+	public void setFormat(int format) {
+		this.format = format;
+	}
+
+	public int getInternalFormat() {
+		return internalFormat;
+	}
+
+	public void setInternalFormat(int internalFormat) {
+		this.internalFormat = internalFormat;
+	}
 
 }

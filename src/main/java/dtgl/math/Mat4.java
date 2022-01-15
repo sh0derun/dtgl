@@ -34,19 +34,64 @@ public class Mat4 {
 	
 	public static Mat4 rotate(double angle, Vec3 axis) {
 		Mat4 mat4 = Mat4.identity();
-		float c = (float) Math.cos(angle), 
-			  s = (float) Math.sin(angle),
+		double rad = Math.toRadians(angle);
+		float c = (float) Math.cos(rad), 
+			  s = (float) Math.sin(rad),
 			  omcos = 1 - c;
-		mat4.values[0+0*4] = c + (axis.coords[0]*axis.coords[0])*omcos;
-		mat4.values[0+1*4] = (axis.coords[0]*axis.coords[1])*omcos - axis.coords[2] * s;
-		mat4.values[0+2*4] = (axis.coords[0]*axis.coords[2])*omcos + axis.coords[1] * s;
-		mat4.values[1+0*4] = (axis.coords[0]*axis.coords[1])*omcos + axis.coords[2] * s;
-		mat4.values[1+1*4] = c + (axis.coords[1]*axis.coords[1])*omcos;
-		mat4.values[1+2*4] = (axis.coords[1]*axis.coords[2])*omcos - axis.coords[0] * s;
-		mat4.values[2+0*4] = (axis.coords[0]*axis.coords[2])*omcos - axis.coords[1] * s;
-		mat4.values[2+1*4] = (axis.coords[1]*axis.coords[2])*omcos - axis.coords[0] * s;
-		mat4.values[2+2*4] = c + (axis.coords[2]*axis.coords[2])*omcos;
+		mat4.values[0 + 0 * 4] = axis.coords[0] * axis.coords[0] * omcos + c;
+		mat4.values[0 + 1 * 4] = axis.coords[1] * axis.coords[0] * omcos + axis.coords[2] * s;
+		mat4.values[0 + 2 * 4] = axis.coords[0] * axis.coords[2] * omcos - axis.coords[1] * s;
+		mat4.values[1 + 0 * 4] = axis.coords[0] * axis.coords[1] * omcos - axis.coords[2] * s;
+		mat4.values[1 + 1 * 4] = axis.coords[1] * axis.coords[1] * omcos + c;
+		mat4.values[1 + 2 * 4] = axis.coords[1] * axis.coords[2] * omcos + axis.coords[0] * s;
+		mat4.values[2 + 0 * 4] = axis.coords[0] * axis.coords[2] * omcos + axis.coords[1] * s;
+		mat4.values[2 + 1 * 4] = axis.coords[1] * axis.coords[2] * omcos - axis.coords[0] * s;
+		mat4.values[2 + 2 * 4] = axis.coords[2] * axis.coords[2] * omcos + c;
 		return mat4;
+	}
+	
+	public static Mat4 rotZ(float angle) {
+		double rad = Math.toRadians(angle);
+		float c = (float) Math.cos(rad), 
+			  s = (float) Math.sin(rad);
+		Mat4 mat4 = Mat4.identity();
+		mat4.values[0 + 0 * 4] = c;
+		mat4.values[0 + 1 * 4] = -s;
+		mat4.values[1 + 0 * 4] = s;
+		mat4.values[1 + 1 * 4] = c;
+		return mat4;
+	}
+	
+	public static Mat4 rotX(float angle) {
+		double rad = Math.toRadians(angle);
+		float c = (float) Math.cos(rad), 
+			  s = (float) Math.sin(rad);
+		Mat4 mat4 = Mat4.identity();
+		mat4.values[1 + 1 * 4] = c;
+		mat4.values[1 + 2 * 4] = -s;
+		mat4.values[2 + 1 * 4] = s;
+		mat4.values[2 + 2 * 4] = c;
+		return mat4;
+	}
+	
+	public static Mat4 rotY(float angle) {
+		double rad = Math.toRadians(angle);
+		float c = (float) Math.cos(rad), 
+			  s = (float) Math.sin(rad);
+		Mat4 mat4 = Mat4.identity();
+		mat4.values[0 + 0 * 4] = c;
+		mat4.values[0 + 2 * 4] = -s;
+		mat4.values[2 + 0 * 4] = s;
+		mat4.values[2 + 2 * 4] = c;
+		return mat4;
+	}
+	
+	public static Mat4 getTransformationMat(Vec3 translation, Vec3 rotation, float scale) {
+		Mat4 transformation = Mat4.identity();
+		transformation = Mat4.scale(scale).mult(transformation);
+		transformation = Mat4.rotZ(rotation.coords[2]).mult(Mat4.rotY(rotation.coords[1]).mult(Mat4.rotX(rotation.coords[0]))).mult(transformation);
+		transformation = Mat4.translate(translation).mult(transformation);
+		return transformation;
 	}
 	
 	public static Mat4 perspective(float fov, float aspect, float far, float near) {

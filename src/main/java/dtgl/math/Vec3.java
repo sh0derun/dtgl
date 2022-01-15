@@ -22,5 +22,17 @@ public class Vec3 extends Vec{
 						coords[0]*vec.coords[2] - coords[2]*vec.coords[0],
 						coords[0]*vec.coords[1] - coords[1]*vec.coords[0]);
 	}
+	
+	public static Vec3 UP() {
+		return new Vec3(0,1,0);
+	}
+	
+	public static Vec3 RIGHT() {
+		return new Vec3(1,0,0);
+	}
+	
+	public static Vec3 TOWARD() {
+		return new Vec3(0,0,1);
+	}
 
 }

@@ -12,6 +12,7 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<joml.version>1.9.6</joml.version>
 	</properties>
 
 	<dependencyManagement>
@@ -339,6 +340,11 @@
 			<artifactId>lwjgl-zstd</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
 		</dependency>
+		<dependency>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>${joml.version}</version>
+        </dependency>
 	</dependencies>
 
 	<build>

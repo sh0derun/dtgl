@@ -2,11 +2,17 @@ package dtgl.display;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
 
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 import dtgl.display.listener.Listener;
 
@@ -19,8 +25,8 @@ public class Window {
 
 	private Window() {
 		title = "DTGL";
-		width = 500;
-		height = 500;
+		width = 800;
+		height = 800;
 		createWindow(title, width, height);
 	}
 
@@ -51,6 +57,10 @@ public class Window {
 		glfwSwapInterval(1);
 		glfwShowWindow(windowId);
 		GL.createCapabilities();
+		
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		glEnable(GL30.GL_DEPTH_TEST);
 
 		glfwSetWindowSizeCallback(windowId, (window, m_width, m_height) -> {
 			WINDOW.width = m_width;

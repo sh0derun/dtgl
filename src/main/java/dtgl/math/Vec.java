@@ -1,14 +1,16 @@
 package dtgl.math;
 
+import java.util.List;
+
 public abstract class Vec {
 
 	float[] coords;
 	
-	public Vec(int n) {
+	protected Vec(int n) {
 		coords = new float[n];
 	}
 	
-	public Vec(int n, float...cds) {
+	protected Vec(int n, float...cds) {
 		coords = new float[n];
 		for(int i = 0; i < coords.length; i++) {
 			coords[i] = cds[i];

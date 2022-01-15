@@ -16,7 +16,7 @@ public class ModelLoader {
 						  eboList = new ArrayList<>();
 	
 
-	public Model load(float[] positions, int[] indices) {
+	public Model load(float[] positions, int[] indices, Texture texture) {
 		int vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 		vaoList.add(vao);
@@ -41,14 +41,6 @@ public class ModelLoader {
 	   
 		glVertexAttribPointer(2, 2, GL_FLOAT, false, vertexSizeBytes, (posSize+colSize) * Float.BYTES);
 		glEnableVertexAttribArray(2);
-		
-		Texture texture = new Texture("res/checker.png", "texChecker");
-		texture.bindTexture();
-		texture.loadTexture(GL_LUMINANCE, GL_LUMINANCE);
-		
-//		Texture texture = new Texture("res/2037089.png", "texChecker");
-//		texture.bindTexture();
-//		texture.loadTexture(GL_RGBA8, GL_RGBA);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
