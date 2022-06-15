@@ -8,18 +8,25 @@ import static org.lwjgl.opengl.GL30.*;
 
 import dtgl.math.Mat4;
 import dtgl.shader.Shader;
+import org.lwjgl.glfw.GLFW;
 
 public class ModelRenderer {
 	
 	public void render(Model model, Shader shader) {
 		glBindVertexArray(model.getVao());
 		enableVertexAtrribArrays();
+		shader.setUniformFloat("time", (float)(GLFW.glfwGetTime()));
 		//shader.setUniformFloat("time", (float)(milli / 1000.0));
 		//shader.setUniformVec2("res", new Vec2(window.getWidth(), window.getHeight()));
-		if(model.getTexture() != null) {
-			shader.setUniformInt(model.getTexture().getUniformName(), 0);
-			glActiveTexture(GL_TEXTURE0);
-	    	glBindTexture(GL_TEXTURE_2D, model.getTexture().getId());
+		if(model.getTextures() != null) {
+			for(int i = 0; i < model.getTextures().length; i++) {
+				Texture texture = model.getTextures()[i];
+				if(texture != null) {
+					shader.setUniformInt(texture.getUniformName(), i);
+					glActiveTexture(GL_TEXTURE0+i);
+					glBindTexture(GL_TEXTURE_2D, texture.getId());
+				}
+			}
 		}
 		Mat4 transformation = Mat4.getTransformationMat(model.getPos(), model.getRot(), model.getScale());
 		shader.setUniformMat4("ml_mat", transformation);

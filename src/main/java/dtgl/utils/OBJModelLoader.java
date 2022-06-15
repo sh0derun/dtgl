@@ -11,16 +11,13 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.swing.event.ListSelectionEvent;
+import org.lwjgl.assimp.Assimp;
 
-import dtgl.math.Vec;
 import dtgl.math.Vec2;
 import dtgl.math.Vec3;
 
 class ModelData{
-	public float[] vertexPositions;
-	public float[] normals;
-	public float[] textureCoords;
+	public float[] vertexData;
 	public int[] indices;
 }
 
@@ -36,19 +33,22 @@ public class OBJModelLoader {
 		}
 		
 		String line = null;
-		List<Vec3> vertexPositions = new ArrayList<Vec3>();
-		List<Vec3> normals = new ArrayList<Vec3>();
-		List<Vec2> textureCoords = new ArrayList<Vec2>();
-		List<Integer> indices = new ArrayList<Integer>();
+		List<Vec3> vertexPositions = new ArrayList<>();
+		List<Vec3> normals = new ArrayList<>();
+		List<Vec2> textureCoords = new ArrayList<>();
+		List<Integer> indices = new ArrayList<>();
+		List<Float> vertices = new ArrayList<>();
 		try {
 			Function<String, Float> stringToFloat = Float::parseFloat;
 			Function<List<Float>, Vec3> floatsToVec3 = floats -> new Vec3(floats.get(0), floats.get(1), floats.get(2));
 			Function<String[], Vec3> convertLineToVec3 = str -> floatsToVec3.apply(Arrays.stream(str).map(stringToFloat).collect(Collectors.toList()));
+			
 			while((line = reader.readLine()) != null) {
 				switch(line.substring(0, 2)) {
 					case "v ":{
 						String[] cds = line.substring(2).split(" ");
-						vertexPositions.add(convertLineToVec3.apply(cds));
+						Vec3 vertex = convertLineToVec3.apply(cds);
+						vertexPositions.add(vertex);
 					}
 					break;
 					case "vn":{
@@ -60,6 +60,13 @@ public class OBJModelLoader {
 						String[] cds = line.substring(3).split(" ");
 						Vec2 vec2 = new Vec2(Float.parseFloat(cds[0]), Float.parseFloat(cds[1]));
 						textureCoords.add(vec2);
+					}
+					break;
+					case "f ":{
+						String[] cds = line.substring(2).split(" ");
+						indices.add(Integer.parseInt(cds[0])-1);
+						indices.add(Integer.parseInt(cds[1])-1);
+						indices.add(Integer.parseInt(cds[2])-1);
 					}
 					break;
 				}
@@ -74,10 +81,12 @@ public class OBJModelLoader {
 			}
 		}
 		
-		System.out.println(vertexPositions);
-		System.out.println(normals);
-		System.out.println(textureCoords);
+		System.out.println(vertexPositions.size());
+		System.out.println(normals.size());
+		System.out.println(textureCoords.size());
+		System.out.println(indices.size());
 		
+		modelData = new ModelData();
 		return modelData;
 	}
 	

@@ -4,16 +4,11 @@ import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Random;
-
 import org.lwjgl.glfw.GLFW;
 
 import dtgl.display.Window;
 import dtgl.display.listener.Listener;
-import dtgl.math.Mat4;
-import dtgl.math.Vec2;
+
 import dtgl.math.Vec3;
 import dtgl.math.Vec4;
 import dtgl.model.Model;
@@ -21,6 +16,8 @@ import dtgl.model.ModelLoader;
 import dtgl.model.ModelRenderer;
 import dtgl.model.Texture;
 import dtgl.shader.Shader;
+import dtgl.utils.OBJModelLoader;
+import org.lwjgl.system.CallbackI;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -35,6 +32,8 @@ public class Main {
 		Shader shader = new Shader("shaders/vs.glsl", "shaders/fs.glsl");
 		ModelLoader loader = new ModelLoader();
 		ModelRenderer renderer = new ModelRenderer();
+		
+		//OBJModelLoader.LoadModelDataFromOBJ("res/cube.obj");
 		
 		float[] vertices = {
 			0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1,   1.0f, 1.0f,
@@ -51,8 +50,10 @@ public class Main {
 //		Texture texture = new Texture("res/checker.png", "texChecker");
 //		texture.bindTexture();
 //		texture.loadTexture(GL_LUMINANCE, GL_LUMINANCE);
-		Texture texture = new Texture("res/2037089.png", "texChecker", GL_RGBA, GL_RGBA8);
-		Model model = loader.load(vertices, indices, null);
+		Texture texture = new Texture("res/2037089.png", "texture0", GL_RGBA, GL_RGBA8);
+		Texture texture1 = new Texture("res/checker.png", "texture1", GL_LUMINANCE, GL_LUMINANCE);
+		Texture[] textures = {texture, texture1};
+		Model model = loader.load(vertices, indices, textures);
 		//model.setRot(new Vec3(0,0,45));
 		
 		shader.activate();
@@ -64,7 +65,7 @@ public class Main {
 			//System.out.println((float)GLFW.glfwGetTime()%2.0);
 			float f = 0.25f;//(float) Math.abs(Math.signum((Math.random()-0.5f)*1.0f));
 			//model.setPos(new Vec3(f*((float)GLFW.glfwGetTime()%1.5f),0,0));
-			model.setScale((float)Math.sin(GLFW.glfwGetTime())*0.5f+0.5f);
+			//model.setScale((float)Math.sin(GLFW.glfwGetTime())*0.5f+0.5f);
 			model.setRot(new Vec3(0,0,(float)GLFW.glfwGetTime()*30));
 			renderer.render(model, shader);
 			window.update();

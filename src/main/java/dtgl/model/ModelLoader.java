@@ -1,5 +1,7 @@
 package dtgl.model;
 
+import org.lwjgl.opengl.GL30;
+
 import static org.lwjgl.opengl.GL30.*;
 
 import java.nio.ByteBuffer;
@@ -16,7 +18,7 @@ public class ModelLoader {
 						  eboList = new ArrayList<>();
 	
 
-	public Model load(float[] positions, int[] indices, Texture texture) {
+	public Model load(float[] positions, int[] indices, Texture[] textures) {
 		int vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 		vaoList.add(vao);
@@ -39,21 +41,21 @@ public class ModelLoader {
 		glVertexAttribPointer(1, colSize, GL_FLOAT, false, vertexSizeBytes, posSize * Float.BYTES);
 		glEnableVertexAttribArray(1);
 	   
-		glVertexAttribPointer(2, 2, GL_FLOAT, false, vertexSizeBytes, (posSize+colSize) * Float.BYTES);
+		glVertexAttribPointer(2, texSize, GL_FLOAT, false, vertexSizeBytes, (posSize+colSize) * Float.BYTES);
 		glEnableVertexAttribArray(2);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 		
-		return new Model(vao, indices.length, texture);
+		return new Model(vao, indices.length, textures);
 	}
 
 	public void clean() {
-		vaoList.forEach(vao -> glDeleteVertexArrays(vao));
-		vboList.forEach(vbo -> glDeleteFramebuffers(vbo));
-		eboList.forEach(ebo -> glDeleteFramebuffers(ebo));
+		vaoList.forEach(GL30::glDeleteVertexArrays);
+		vboList.forEach(GL30::glDeleteFramebuffers);
+		eboList.forEach(GL30::glDeleteFramebuffers);
 	}
-	
+
 	private FloatBuffer floatArrayToFloatBuffer(float[] data) {
 		ByteBuffer buf = ByteBuffer.allocateDirect(data.length * 4);
 		buf.order(ByteOrder.nativeOrder());

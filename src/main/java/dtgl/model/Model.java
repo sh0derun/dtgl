@@ -7,21 +7,24 @@ public class Model {
 	
 	private int vao;
 	private int vertexCount;
-	private Texture texture;
+	private Texture[] textures;
 	private Vec3 pos, rot;
 	private float scale;
 	
-	public Model(int vao, int vertexCount, Texture texture) {
+	public Model(int vao, int vertexCount, Texture[] textures) {
 		this.vao = vao;
 		this.vertexCount = vertexCount;
-		this.texture = texture;
+		this.textures = textures;
 		pos = new Vec3();
 		rot = new Vec3();
 		scale = 1.0f;
-		
-		if(this.texture != null) {
-			this.texture.bindTexture();
-			this.texture.loadTexture();
+
+		if(textures != null) {
+			for (Texture texture : this.textures)
+				if (texture != null) {
+					texture.bindTexture();
+					texture.loadTexture();
+				}
 		}
 	}
 
@@ -33,8 +36,8 @@ public class Model {
 		return vertexCount;
 	}
 	
-	public Texture getTexture() {
-		return texture;
+	public Texture[] getTextures() {
+		return textures;
 	}
 
 	public Vec3 getPos() {

@@ -32,7 +32,7 @@ public class Texture {
 	}
 	
 	public void bindTexture() {
-		glBindTexture(GL_TEXTURE_2D, id);
+		glBindTexture(GL_TEXTURE_2D, this.id);
 	}
 	
 	public void unbindTexture() {
