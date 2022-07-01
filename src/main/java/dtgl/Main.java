@@ -67,7 +67,8 @@ public class Main {
 			//model.setPos(new Vec3(f*((float)GLFW.glfwGetTime()%1.5f),0,0));
 			//model.setScale((float)Math.sin(GLFW.glfwGetTime())*0.5f+0.5f);
 			model.setRot(new Vec3(0,0,(float)GLFW.glfwGetTime()*30));
-			renderer.render(model, shader);
+			renderer.render(model, shader, window);
+			System.out.println(window.getWidth()+","+window.getHeight());
 			window.update();
 			if(listener.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
 				break;

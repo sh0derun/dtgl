@@ -3,6 +3,8 @@ package dtgl.model;
 
 import dtgl.math.Vec3;
 
+import java.util.Optional;
+
 public class Model {
 	
 	private int vao;
@@ -36,8 +38,8 @@ public class Model {
 		return vertexCount;
 	}
 	
-	public Texture[] getTextures() {
-		return textures;
+	public Optional<Texture[]> getTextures() {
+		return Optional.of(textures);
 	}
 
 	public Vec3 getPos() {

@@ -31,29 +31,27 @@ public class Shader {
 		this.programId = loadShaders(vsSource, fsSource);
 	}
 
+	private int createCompileAttachShader(int shaderType, String shaderSource, int programId){
+		int shaderId = glCreateShader(shaderType);
+		glShaderSource(shaderId, shaderSource);
+		glCompileShader(shaderId);
+		int res = glGetShaderi(shaderId, GL_COMPILE_STATUS);
+		if (res == GL_FALSE) {
+			String infoLog = glGetShaderInfoLog(shaderId);
+			throw new ApplicationRuntimeException(infoLog);
+		}
+		glAttachShader(programId, shaderId);
+		return shaderId;
+	}
+
 	private int loadShaders(String vsSource, String fsSource) {
 		int programId = glCreateProgram();
-		int vsId = glCreateShader(GL_VERTEX_SHADER);
-		int fsId = glCreateShader(GL_FRAGMENT_SHADER);
+
 		// vertex shader
-		glShaderSource(vsId, vsSource);
-		glCompileShader(vsId);
-		int res = glGetShaderi(vsId, GL_COMPILE_STATUS);
-		if (res == GL_FALSE) {
-			String infoLog = glGetShaderInfoLog(vsId);
-			throw new ApplicationRuntimeException(infoLog);
-		}
-		glAttachShader(programId, vsId);
+		int vsId = createCompileAttachShader(GL_VERTEX_SHADER, vsSource, programId);
 
 		// fragment shader
-		glShaderSource(fsId, fsSource);
-		glCompileShader(fsId);
-		res = glGetShaderi(fsId, GL_COMPILE_STATUS);
-		if (res == GL_FALSE) {
-			String infoLog = glGetShaderInfoLog(fsId);
-			throw new ApplicationRuntimeException(infoLog);
-		}
-		glAttachShader(programId, fsId);
+		int fsId = createCompileAttachShader(GL_FRAGMENT_SHADER, fsSource, programId);
 
 		glLinkProgram(programId);
 		glValidateProgram(programId);

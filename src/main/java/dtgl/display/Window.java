@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 
+import dtgl.exception.ApplicationRuntimeException;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -50,7 +51,7 @@ public class Window {
 		windowId = glfwCreateWindow(width, height, title, 0, 0);
 
 		if (windowId == 0) {
-			throw new RuntimeException("Could not create window !");
+			throw new ApplicationRuntimeException("Could not create window !");
 		}
 
 		glfwMakeContextCurrent(windowId);
@@ -62,10 +63,10 @@ public class Window {
 		glEnable(GL_BLEND);
 		glEnable(GL30.GL_DEPTH_TEST);
 
-		glfwSetWindowSizeCallback(windowId, (window, m_width, m_height) -> {
-			WINDOW.width = m_width;
-			WINDOW.height = m_height;
-			GL11.glViewport(0, 0, m_width, m_height);
+		glfwSetWindowSizeCallback(windowId, (window, w, h) -> {
+			WINDOW.width = w;
+			WINDOW.height = h;
+			GL11.glViewport(0, 0, w, h);
 		});
 		
 		glfwSetKeyCallback(windowId, Listener.getInstance()::key_callback);

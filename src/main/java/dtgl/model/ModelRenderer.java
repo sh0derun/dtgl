@@ -1,47 +1,53 @@
 package dtgl.model;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL30.*;
-
+import dtgl.display.Window;
 import dtgl.math.Mat4;
-import dtgl.shader.Shader;
+import dtgl.math.Vec2;
+import dtgl.shader.*;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.lwjgl.opengl.GL30.*;
+
 public class ModelRenderer {
+
+	UniformsModifier uniformsModifier = new UniformsModifierDirect();
 	
-	public void render(Model model, Shader shader) {
+	public void render(Model model, Shader shader, Window window) {
 		glBindVertexArray(model.getVao());
-		enableVertexAtrribArrays();
-		shader.setUniformFloat("time", (float)(GLFW.glfwGetTime()));
-		//shader.setUniformFloat("time", (float)(milli / 1000.0));
-		//shader.setUniformVec2("res", new Vec2(window.getWidth(), window.getHeight()));
-		if(model.getTextures() != null) {
-			for(int i = 0; i < model.getTextures().length; i++) {
-				Texture texture = model.getTextures()[i];
-				if(texture != null) {
-					shader.setUniformInt(texture.getUniformName(), i);
-					glActiveTexture(GL_TEXTURE0+i);
-					glBindTexture(GL_TEXTURE_2D, texture.getId());
-				}
-			}
-		}
-		Mat4 transformation = Mat4.getTransformationMat(model.getPos(), model.getRot(), model.getScale());
-		shader.setUniformMat4("ml_mat", transformation);
+		enableVertexAttribArrays();
+
+		List<Uniform> mat4s = Arrays.asList(new Uniform<>(UniformType.MAT4,"ml_mat",Mat4.getTransformationMat(model.getPos(), model.getRot(), model.getScale())));
+		List<Uniform> vec2s = Arrays.asList(new Uniform<>(UniformType.VEC2, "resolution", window == null ? new Vec2(500, 500) : new Vec2(window.getWidth(), window.getHeight())));
+		List<Uniform> floats = Arrays.asList(new Uniform<>(UniformType.FLOAT,"time", (float)(GLFW.glfwGetTime())));
+		List<Uniform> uniformTextures = Arrays.stream(model.getTextures().orElse(new Texture[]{}))
+												.map(texture -> new Uniform<>(UniformType.SAMPLER_2D, texture.getUniformName(), texture))
+												.collect(Collectors.toList());
+
+		EnumMap<UniformType, List<Uniform>> uniformsMap = new EnumMap<>(UniformType.class);
+		uniformsMap.put(UniformType.FLOAT, floats);
+		uniformsMap.put(UniformType.VEC2, vec2s);
+		uniformsMap.put(UniformType.MAT4, mat4s);
+		uniformsMap.put(UniformType.SAMPLER_2D, uniformTextures);
+
+		uniformsModifier.updateUniformsValues(shader, uniformsMap);
+
 		glDrawElements(GL_TRIANGLES, model.getVertexCount(), GL_UNSIGNED_INT, 0);
-		disableVertexAtrribArrays();
+		disableVertexAttribArrays();
 		glBindVertexArray(0);
 	}
 	
-	private void enableVertexAtrribArrays() {
+	private void enableVertexAttribArrays() {
 		glEnableVertexAttribArray(0);//position
 		glEnableVertexAttribArray(1);//color
 		glEnableVertexAttribArray(2);//texture coords
 	}
 	
-	private void disableVertexAtrribArrays() {
+	private void disableVertexAttribArrays() {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
