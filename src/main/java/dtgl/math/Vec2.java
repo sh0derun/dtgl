@@ -3,21 +3,22 @@ package dtgl.math;
 import java.util.Arrays;
 
 public class Vec2 extends Vec{
-	
+
+	float[] coords;
+
 	public Vec2() {
-		super(2);
+		this.coords = new float[2];
 	}
-	
 	public Vec2(float x, float y) {
-		super(2, x, y);
+		this.coords = new float[]{x,y};
+	}
+
+	public float[] getCoords() {
+		return coords;
 	}
 
 	public String toString() {
-		return "Vec2 [coords=" + Arrays.toString(coords) + "]";
-	}
-
-	public Vec cross(Vec vec) {
-		throw new UnsupportedOperationException("");
+		return "Vec2 [coords= ]";
 	}
 
 }

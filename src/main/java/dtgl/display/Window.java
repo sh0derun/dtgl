@@ -1,21 +1,15 @@
 package dtgl.display;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glEnable;
-
+import dtgl.display.listener.Listener;
 import dtgl.exception.ApplicationRuntimeException;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 
-import dtgl.display.listener.Listener;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
 
 public class Window {
 
@@ -61,7 +55,9 @@ public class Window {
 		
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
-		glEnable(GL30.GL_DEPTH_TEST);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(true);
 
 		glfwSetWindowSizeCallback(windowId, (window, w, h) -> {
 			WINDOW.width = w;
@@ -87,6 +83,8 @@ public class Window {
 	}
 
 	public void clear() {
+		glClearColor(0,0,0,1);
+		//glClearDepth(1.0f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 

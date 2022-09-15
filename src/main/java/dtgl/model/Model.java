@@ -5,30 +5,13 @@ import dtgl.math.Vec3;
 
 import java.util.Optional;
 
-public class Model {
+public abstract class Model {
 	
-	private int vao;
-	private int vertexCount;
-	private Texture[] textures;
-	private Vec3 pos, rot;
-	private float scale;
-	
-	public Model(int vao, int vertexCount, Texture[] textures) {
-		this.vao = vao;
-		this.vertexCount = vertexCount;
-		this.textures = textures;
-		pos = new Vec3();
-		rot = new Vec3();
-		scale = 1.0f;
-
-		if(textures != null) {
-			for (Texture texture : this.textures)
-				if (texture != null) {
-					texture.bindTexture();
-					texture.loadTexture();
-				}
-		}
-	}
+	protected int vao;
+	protected int vertexCount;
+	protected float angle;
+	protected Vec3 pos, rot;
+	protected float scale;
 
 	public int getVao() {
 		return vao;
@@ -36,10 +19,6 @@ public class Model {
 
 	public int getVertexCount() {
 		return vertexCount;
-	}
-	
-	public Optional<Texture[]> getTextures() {
-		return Optional.of(textures);
 	}
 
 	public Vec3 getPos() {
@@ -66,4 +45,15 @@ public class Model {
 		this.scale = scale;
 	}
 
+	public Optional<Texture[]> getTextures() {
+		return Optional.empty();
+	}
+
+	public void setAngle(float angle) {
+		this.angle = angle;
+	}
+
+	public float getAngle() {
+		return angle;
+	}
 }

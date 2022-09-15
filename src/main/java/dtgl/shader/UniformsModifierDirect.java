@@ -1,15 +1,12 @@
 package dtgl.shader;
 
-import dtgl.display.Window;
 import dtgl.exception.ApplicationRuntimeException;
 import dtgl.math.Mat4;
 import dtgl.math.Vec2;
 import dtgl.model.Texture;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;

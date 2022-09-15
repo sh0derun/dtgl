@@ -1,74 +1,73 @@
 package dtgl;
 
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_RGBA8;
-import static org.lwjgl.opengl.GL11.glClearColor;
-
-import org.lwjgl.glfw.GLFW;
-
 import dtgl.display.Window;
 import dtgl.display.listener.Listener;
-
 import dtgl.math.Vec3;
-import dtgl.math.Vec4;
 import dtgl.model.Model;
 import dtgl.model.ModelLoader;
 import dtgl.model.ModelRenderer;
 import dtgl.model.Texture;
 import dtgl.shader.Shader;
-import dtgl.utils.OBJModelLoader;
-import org.lwjgl.system.CallbackI;
+import org.lwjgl.glfw.GLFW;
 
-import static org.lwjgl.opengl.GL30.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL30.GL_LUMINANCE;
 
 public class Main {
 
 	public static void main(String[] args) {
+
 		Window window = Window.getInstance();
 		Listener listener = Listener.getInstance();
-		
-		glClearColor(0,0,0,1);	
-		
-		Shader shader = new Shader("shaders/vs.glsl", "shaders/fs.glsl");
+
 		ModelLoader loader = new ModelLoader();
-		ModelRenderer renderer = new ModelRenderer();
-		
-		//OBJModelLoader.LoadModelDataFromOBJ("res/cube.obj");
-		
-		float[] vertices = {
-			0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1,   1.0f, 1.0f,
-			0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1,   1.0f, 0.0f,
-		   -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1,   0.0f, 0.0f,
-		   -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1,   0.0f, 1.0f
-		};
-		
-		int[] indices = {
-			0, 3, 2,
-			2, 1, 0
-		};
-		
-//		Texture texture = new Texture("res/checker.png", "texChecker");
-//		texture.bindTexture();
-//		texture.loadTexture(GL_LUMINANCE, GL_LUMINANCE);
-		Texture texture = new Texture("res/2037089.png", "texture0", GL_RGBA, GL_RGBA8);
-		Texture texture1 = new Texture("res/checker.png", "texture1", GL_LUMINANCE, GL_LUMINANCE);
-		Texture[] textures = {texture, texture1};
-		Model model = loader.load(vertices, indices, textures);
-		//model.setRot(new Vec3(0,0,45));
-		
-		shader.activate();
-		
+
+		Texture texture = new Texture("res/2037089.png", "texture2", GL_RGBA, GL_RGBA8);
+		Texture texture1 = new Texture("res/bvb.png", "texture2", GL_RGBA, GL_RGBA8);
+		Texture texture2 = new Texture("res/checker.png", "texture2", GL_LUMINANCE, GL_LUMINANCE);
+
+		Random rnd = new Random();
+		float size = 0.15f;
+		List<Model> cubes = new ArrayList<>();
+
+		Texture[] txs = new Texture[]{texture,texture1,texture2};
+
+		for(float i = 0; i <= 2.0*Math.PI; i+=(2*Math.PI)/12.0){
+			for(float j = 0; j <= Math.PI; j+=Math.PI/8.0){
+				float theta = j;
+				float phi = i;
+				Vec3 w = new Vec3((float)(2.25*Math.sin(theta)*Math.cos(phi)) ,(float)(2.25*Math.sin(theta)*Math.sin(phi)), (float)(2.25*Math.cos(theta)));
+				Model cube = (int)(j+i)%2==0 ? loader.loadCube(size, null) : loader.loadCube(size, new Texture[]{txs[rnd.nextInt(txs.length)]});
+				cube.setPos(w);
+				cubes.add(cube);
+			}
+		}
+
+		Shader cubeShader = new Shader("shaders/vs.glsl", "shaders/fscube.glsl");
+		Shader shader = new Shader("shaders/vs.glsl", "shaders/fs1.glsl");
+		ModelRenderer renderer = new ModelRenderer(window);
+
 		while(!window.isClosed()) {
+			float time = (float)GLFW.glfwGetTime();
 			window.clear();
-			//model.setScale((float)(Math.sin(GLFW.glfwGetTime())*0.5+0.5)+1.0f);
-			//model.setRot(new Vec3(1,1,(float)(Math.sin(GLFW.glfwGetTime())*180)));
-			//System.out.println((float)GLFW.glfwGetTime()%2.0);
-			float f = 0.25f;//(float) Math.abs(Math.signum((Math.random()-0.5f)*1.0f));
-			//model.setPos(new Vec3(f*((float)GLFW.glfwGetTime()%1.5f),0,0));
-			//model.setScale((float)Math.sin(GLFW.glfwGetTime())*0.5f+0.5f);
-			model.setRot(new Vec3(0,0,(float)GLFW.glfwGetTime()*30));
-			renderer.render(model, shader, window);
-			System.out.println(window.getWidth()+","+window.getHeight());
+			for(int i = 0; i < cubes.size(); i++){
+				Model cube = cubes.get(i);
+				if(!cube.getTextures().isPresent()){
+					cubeShader.activate();
+					renderer.render(cube, cubeShader, window);
+					cubeShader.deactivate();
+				}else {
+					shader.activate();
+					renderer.render(cube, shader, window);
+					shader.deactivate();
+				}
+			}
 			window.update();
 			if(listener.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
 				break;
@@ -77,6 +76,10 @@ public class Main {
 		
 		loader.clean();
 		window.free();
+	}
+
+	public static float getRandomFloat(float min, float max){
+		return min + new Random().nextFloat() * (max - min);
 	}
 
 }
