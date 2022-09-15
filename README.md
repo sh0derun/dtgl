@@ -16,4 +16,4 @@ A 3D java engine.
 
 ## Screneshots
 
-
+![demo](demo.gif)
