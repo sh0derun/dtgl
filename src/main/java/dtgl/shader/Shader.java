@@ -109,13 +109,4 @@ public class Shader {
 		glUseProgram(0);
 	}
 
-	private FloatBuffer floatArrayToFloatBuffer(float[] data) {
-		ByteBuffer buf = ByteBuffer.allocateDirect(data.length * 4);
-		buf.order(ByteOrder.nativeOrder());
-		FloatBuffer buffer = buf.asFloatBuffer();
-		buffer.put(data);
-		buffer.flip();
-		return buffer;
-	}
-
 }
