@@ -13,7 +13,7 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
-public class UniformsModifierDirect implements UniformsModifier{
+public class DefaultUniformsHandler implements UniformsHandler{
 
     @Override
     public void updateUniformsValues(Shader shader, EnumMap<UniformType, List<Uniform>> uniformsMap) {

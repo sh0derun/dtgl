@@ -1,29 +1,20 @@
 package dtgl.shader;
 
-public class Uniform <T> {
+public class Uniform {
 
     private UniformType type;
     private String name;
-    private T value;
+    private Object value;
 
     public Uniform(){
         this.type = UniformType.NONE;
         this.name = "";
     }
 
-    public Uniform(UniformType type, String name, T value) {
+    public Uniform(UniformType type, String name, Object value) {
         this.type = type;
         this.name = name;
         this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return "Uniform{" +
-                "type=" + type +
-                ", name='" + name + '\'' +
-                ", value=" + value +
-                '}';
     }
 
     public UniformType getType() {
@@ -42,11 +33,20 @@ public class Uniform <T> {
         this.name = name;
     }
 
-    public T getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(T value) {
+    public void setValue(Object value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "Uniform{" +
+                "type=" + type +
+                ", name='" + name + '\'' +
+                ", value=" + value +
+                '}';
     }
 }

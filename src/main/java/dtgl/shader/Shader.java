@@ -1,22 +1,16 @@
 package dtgl.shader;
 
-import static org.lwjgl.opengl.GL30.*;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-
 import dtgl.exception.ApplicationRuntimeException;
 import dtgl.math.Mat4;
 import dtgl.math.Vec2;
 import dtgl.math.Vec3;
 import dtgl.math.Vec4;
 import dtgl.utils.FileUtils;
-import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.lwjgl.opengl.GL30.*;
 
 public class Shader {
 

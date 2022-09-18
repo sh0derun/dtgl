@@ -52,10 +52,6 @@ public class ModelLoader {
 
 	public Model loadCube(float size, Texture[] textures){
 		float[] cube = {
-//				0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1,   1.0f, 1.0f,
-//				0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1,   1.0f, 0.0f,
-//				-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1,   0.0f, 0.0f,
-//				-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1,   0.0f, 1.0f
 				-size, -size,  size, 1.0f, 0.0f, 0.0f, 1, 1.0f, 1.0f,
 				size, -size,  size, 0.0f, 1.0f, 0.0f, 1, 1.0f, 0.0f,
 				size,  size,  size, 0.0f, 0.0f, 1.0f, 1, 0.0f, 0.0f,
