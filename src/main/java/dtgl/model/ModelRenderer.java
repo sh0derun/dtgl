@@ -45,13 +45,13 @@ public class ModelRenderer {
 				new Uniform(UniformType.MAT4, "projection", projection));
 
 		List<Uniform> vec2s = Arrays.asList(new Uniform(UniformType.VEC2, "resolution", new Vec2(window.getWidth(), window.getHeight())));
-		List<Uniform> floats = Arrays.asList(new Uniform(UniformType.FLOAT,"time", (float)time));
+//		List<Uniform> floats = Arrays.asList(new Uniform(UniformType.FLOAT,"time", (float)time));
 		List<Uniform> uniformTextures = Arrays.stream(model.getTextures().orElse(new Texture[]{}))
 												.map(texture -> new Uniform(UniformType.SAMPLER_2D, texture.getUniformName(), texture))
 												.collect(Collectors.toList());
 
 		EnumMap<UniformType, List<Uniform>> uniformsMap = new EnumMap<>(UniformType.class);
-		uniformsMap.put(UniformType.FLOAT, floats);
+//		uniformsMap.put(UniformType.FLOAT, floats);
 		uniformsMap.put(UniformType.VEC2, vec2s);
 		uniformsMap.put(UniformType.MAT4, mat4s);
 		uniformsMap.put(UniformType.SAMPLER_2D, uniformTextures);
