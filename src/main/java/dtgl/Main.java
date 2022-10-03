@@ -37,14 +37,24 @@ public class Main {
 
 		Texture[] txs = new Texture[]{texture,texture1,texture2};
 
+		Model[] cubess = {loader.loadCube(size, null),
+						  loader.loadCube(size, new Texture[]{txs[0]}),
+						  loader.loadCube(size, new Texture[]{txs[1]}),
+						  loader.loadCube(size, new Texture[]{txs[2]})};
+
+		List<Vec3> positions = new ArrayList<>();
+
+		double r = 4;
+
 		for(float i = 0; i <= 2.0*Math.PI; i+=(2*Math.PI)/12.0){
 			for(float j = 0; j <= Math.PI; j+=Math.PI/8.0){
 				float theta = j;
 				float phi = i;
-				Vec3 w = new Vec3((float)(2.25*Math.sin(theta)*Math.cos(phi)) ,(float)(2.25*Math.sin(theta)*Math.sin(phi)), (float)(2.25*Math.cos(theta)));
-				Model cube = (int)(j+i)%2==0 ? loader.loadCube(size, null) : loader.loadCube(size, new Texture[]{txs[rnd.nextInt(txs.length)]});
-				cube.setPos(w);
-				cubes.add(cube);
+				float x = (float)(r*Math.sin(theta)*Math.cos(phi));
+				float y = (float)(r*Math.cos(theta));
+				float z = (float)(r*Math.sin(theta)*Math.sin(phi));
+				Vec3 w = new Vec3(x, y, z);
+				positions.add(w);
 			}
 		}
 
@@ -55,8 +65,10 @@ public class Main {
 		while(!window.isClosed()) {
 			float time = (float)GLFW.glfwGetTime();
 			window.clear();
-			for(int i = 0; i < cubes.size(); i++){
-				Model cube = cubes.get(i);
+			for(int i = 0; i < positions.size(); i++){
+				Model cube = cubess[i%cubess.length];
+				cube.setPos(positions.get(i));
+				cube.setRot(new Vec3(time*20,time*20, time*20));
 				if(!cube.getTextures().isPresent()){
 					cubeShader.activate();
 					renderer.render(cube, cubeShader, window);

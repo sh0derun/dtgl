@@ -1,6 +1,7 @@
 package dtgl.shader;
 
 import dtgl.exception.ApplicationRuntimeException;
+import dtgl.exception.ShaderException;
 import dtgl.math.Mat4;
 import dtgl.math.Vec2;
 import dtgl.math.Vec3;
@@ -12,10 +13,22 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL30.*;
 
+/*Shader class
+* All shaders that have compilation error will be replaced by red colored shader (VS_ERROR, FS_ERROR)*/
+
 public class Shader {
+
+	private static final Map<Integer, String> shaderTypes = new HashMap<Integer, String>() {{
+		put(GL_VERTEX_SHADER, "GL_VERTEX_SHADER");
+		put(GL_FRAGMENT_SHADER, "GL_FRAGMENT_SHADER");
+	}};
+
+	private static final String ERROR_VS = "shaders/VS_ERROR.glsl";
+	private static final String ERROR_FS = "shaders/FS_ERROR.glsl";
 
 	int programId;
 	String vsPath, fsPath;
+	public boolean inError;
 	private static final String NO_UNIFORM_NAME_ERROR = "no uniform name found ";
 
 	private Map<String, Integer> locationsMap = new HashMap<>();
@@ -23,33 +36,33 @@ public class Shader {
 	public Shader(String vsPath, String fsPath) {
 		this.vsPath = vsPath;
 		this.fsPath = fsPath;
-		String vsSource = FileUtils.loadFile(vsPath);
-		String fsSource = FileUtils.loadFile(fsPath);
-
-		this.programId = loadShaders(vsSource, fsSource);
+		this.inError = false;
+		this.programId = loadShaders(this.vsPath, this.fsPath);
 	}
 
-	private int createCompileAttachShader(int shaderType, String shaderSource, int programId){
-		int shaderId = glCreateShader(shaderType);
-		glShaderSource(shaderId, shaderSource);
-		glCompileShader(shaderId);
-		int res = glGetShaderi(shaderId, GL_COMPILE_STATUS);
-		if (res == GL_FALSE) {
-			String infoLog = glGetShaderInfoLog(shaderId);
-			throw new ApplicationRuntimeException(infoLog);
-		}
-		glAttachShader(programId, shaderId);
-		return shaderId;
-	}
-
-	private int loadShaders(String vsSource, String fsSource) {
+	private int loadShaders(String vsPath, String fsPath) {
 		int programId = glCreateProgram();
+		int vsId = -1, fsId = -1;
 
-		// vertex shader
-		int vsId = createCompileAttachShader(GL_VERTEX_SHADER, vsSource, programId);
+		try {
+			String vsSource = FileUtils.loadFile(vsPath);
+			String fsSource = FileUtils.loadFile(fsPath);
 
-		// fragment shader
-		int fsId = createCompileAttachShader(GL_FRAGMENT_SHADER, fsSource, programId);
+			vsId = createCompileAttachShader(GL_VERTEX_SHADER, vsPath, vsSource, programId);
+			fsId = createCompileAttachShader(GL_FRAGMENT_SHADER, fsPath, fsSource, programId);
+		} catch(ShaderException e){
+			inError = true;
+
+			glDeleteProgram(programId);
+			glDeleteShader(vsId);
+			glDeleteShader(fsId);
+
+			programId = glCreateProgram();
+			vsId = createCompileAttachShader(GL_VERTEX_SHADER, ERROR_VS, FileUtils.loadFile(ERROR_VS), programId);
+			fsId = createCompileAttachShader(GL_FRAGMENT_SHADER, ERROR_FS, FileUtils.loadFile(ERROR_FS), programId);
+
+			System.out.println(e.getMessage());
+		}
 
 		glLinkProgram(programId);
 		glValidateProgram(programId);
@@ -58,6 +71,19 @@ public class Shader {
 		glDeleteShader(fsId);
 
 		return programId;
+	}
+
+	private int createCompileAttachShader(int shaderType, String shaderPath, String shaderSource, int programId) throws ShaderException {
+		int shaderId = glCreateShader(shaderType);
+		glShaderSource(shaderId, shaderSource);
+		glCompileShader(shaderId);
+		int res = glGetShaderi(shaderId, GL_COMPILE_STATUS);
+		if (res == GL_FALSE) {
+			String infoLog = glGetShaderInfoLog(shaderId);
+			throw new ShaderException(shaderTypes.get(shaderType), shaderPath, infoLog);
+		}
+		glAttachShader(programId, shaderId);
+		return shaderId;
 	}
 
 	private int getUniformLocation(String name) {
