@@ -8,6 +8,7 @@ import dtgl.model.ModelLoader;
 import dtgl.model.ModelRenderer;
 import dtgl.model.Texture;
 import dtgl.shader.Shader;
+import dtgl.utils.OBJModelLoader;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class Main {
 		Listener listener = Listener.getInstance();
 
 		ModelLoader loader = new ModelLoader();
+
+		OBJModelLoader.LoadModelDataFromOBJ("res/cube.obj");
 
 		Texture texture = new Texture("res/2037089.png", "texture2", GL_RGBA, GL_RGBA8);
 		Texture texture1 = new Texture("res/bvb.png", "texture2", GL_RGBA, GL_RGBA8);

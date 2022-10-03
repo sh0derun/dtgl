@@ -11,20 +11,28 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.lwjgl.assimp.Assimp;
-
 import dtgl.math.Vec2;
 import dtgl.math.Vec3;
 
-class ModelData{
-	public float[] vertexData;
-	public int[] indices;
+class FaceGroup{
+	int positionIndex;
+	int textureIndex;
+	int normalIndex;
+
+	FaceGroup(int pid, int tid, int nid){
+		positionIndex = pid;
+		textureIndex = tid;
+		normalIndex = nid;
+	}
+}
+
+class Face{
+	FaceGroup[] faceGroups = new FaceGroup[3];
 }
 
 public class OBJModelLoader {
 
-	public static ModelData LoadModelDataFromOBJ(String OBJFileName) {
-		ModelData modelData = null;
+	public static void LoadModelDataFromOBJ(String OBJFileName) {
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(new File(OBJFileName)));
@@ -33,11 +41,10 @@ public class OBJModelLoader {
 		}
 		
 		String line = null;
-		List<Vec3> vertexPositions = new ArrayList<>();
+		List<Vec3> positions = new ArrayList<>();
 		List<Vec3> normals = new ArrayList<>();
-		List<Vec2> textureCoords = new ArrayList<>();
-		List<Integer> indices = new ArrayList<>();
-		List<Float> vertices = new ArrayList<>();
+		List<Vec2> textures = new ArrayList<>();
+		List<Face> faces = new ArrayList<>();
 		try {
 			Function<String, Float> stringToFloat = Float::parseFloat;
 			Function<List<Float>, Vec3> floatsToVec3 = floats -> new Vec3(floats.get(0), floats.get(1), floats.get(2));
@@ -48,7 +55,7 @@ public class OBJModelLoader {
 					case "v ":{
 						String[] cds = line.substring(2).split(" ");
 						Vec3 vertex = convertLineToVec3.apply(cds);
-						vertexPositions.add(vertex);
+						positions.add(vertex);
 					}
 					break;
 					case "vn":{
@@ -59,14 +66,28 @@ public class OBJModelLoader {
 					case "vt":{
 						String[] cds = line.substring(3).split(" ");
 						Vec2 vec2 = new Vec2(Float.parseFloat(cds[0]), Float.parseFloat(cds[1]));
-						textureCoords.add(vec2);
+						textures.add(vec2);
 					}
 					break;
 					case "f ":{
-						String[] cds = line.substring(2).split(" ");
-						indices.add(Integer.parseInt(cds[0])-1);
-						indices.add(Integer.parseInt(cds[1])-1);
-						indices.add(Integer.parseInt(cds[2])-1);
+						String[] groups = line.substring(2).split(" ");
+						Face face = new Face();
+						for(int i = 0; i < groups.length; i++){
+							String group = groups[i];
+							String[] groupIndices = group.split("/");
+							int pid = Integer.parseInt(groupIndices[0]) - 1;
+							//Both texture and normal ids can be optional in OBJ file
+							int tid = -1;
+							int nid = -1;
+							if(groupIndices.length > 1){
+								tid = groupIndices[1].length() == 0 ? -1 : Integer.parseInt(groupIndices[1]) - 1;
+								if(groupIndices.length > 2){
+									nid = groupIndices[2].length() == 0 ? -1 : Integer.parseInt(groupIndices[2]) - 1;
+								}
+							}
+							face.faceGroups[i] = new FaceGroup(pid, tid, nid);
+						}
+						faces.add(face);
 					}
 					break;
 				}
@@ -81,13 +102,10 @@ public class OBJModelLoader {
 			}
 		}
 		
-		System.out.println(vertexPositions.size());
-		System.out.println(normals.size());
-		System.out.println(textureCoords.size());
-		System.out.println(indices.size());
-		
-		modelData = new ModelData();
-		return modelData;
+		System.out.println("positions count = " + positions.size());
+		System.out.println("normals count = " + normals.size());
+		System.out.println("textures coords count = " + textures.size());
+		System.out.println("faces count = " + faces.size());
 	}
 	
 }
