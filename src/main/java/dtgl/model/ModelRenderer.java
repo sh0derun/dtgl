@@ -45,9 +45,11 @@ public class ModelRenderer {
 				new Uniform(UniformType.MAT4, "model", Mat4.getTransformationMat(model.getPos(), model.getRot(), model.getAngle(), model.getScale())),
 				new Uniform(UniformType.MAT4, "view", /*Mat4.lookAt(camera.getPos(), camera.getTarget(), Vec3.UP)*/Mat4.translate(Vec3.TOWARD.mult(-10))),
 				new Uniform(UniformType.MAT4, "projection", projection));
-
-		if(!shader.inError) {
-
+		if(shader.inError) {
+			List<Uniform> vec4s = Arrays.asList(new Uniform(UniformType.VEC4, "error_color", Shader.ERROR_COLOR));
+			uniformsMap.put(UniformType.VEC4, vec4s);
+		}
+		else {
 			List<Uniform> vec2s = Arrays.asList(new Uniform(UniformType.VEC2, "resolution", new Vec2(window.getWidth(), window.getHeight())));
 //		List<Uniform> floats = Arrays.asList(new Uniform(UniformType.FLOAT,"time", (float)time));
 			List<Uniform> uniformTextures = Arrays.stream(model.getTextures().orElse(new Texture[]{}))

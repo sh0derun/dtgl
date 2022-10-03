@@ -14,7 +14,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL30.*;
 
 /*Shader class
-* All shaders that have compilation error will be replaced by red colored shader (VS_ERROR, FS_ERROR)*/
+* All shaders that have compilation error will be replaced by colored (ERROR_COLOR) shader (VS_ERROR, FS_ERROR)*/
 
 public class Shader {
 
@@ -25,6 +25,7 @@ public class Shader {
 
 	private static final String ERROR_VS = "shaders/VS_ERROR.glsl";
 	private static final String ERROR_FS = "shaders/FS_ERROR.glsl";
+	public static final Vec4 ERROR_COLOR = new Vec4(0,1,0,1);
 
 	int programId;
 	String vsPath, fsPath;

@@ -4,6 +4,8 @@ out vec4 FragColor;
 in vec4 outColor;
 in vec2 outTex;
 
+uniform vec4 error_color;
+
 void main() {
-    FragColor = vec4(1,0,0,1);
+    FragColor = error_color;
 }
