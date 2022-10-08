@@ -51,18 +51,20 @@ public class ModelRenderer {
 		}
 		else {
 			List<Uniform> vec2s = Arrays.asList(new Uniform(UniformType.VEC2, "resolution", new Vec2(window.getWidth(), window.getHeight())));
-//		List<Uniform> floats = Arrays.asList(new Uniform(UniformType.FLOAT,"time", (float)time));
+//			List<Uniform> floats = Arrays.asList(new Uniform(UniformType.FLOAT,"time", (float)time));
 			List<Uniform> uniformTextures = Arrays.stream(model.getTextures().orElse(new Texture[]{}))
 					.map(texture -> new Uniform(UniformType.SAMPLER_2D, texture.getUniformName(), texture))
 					.collect(Collectors.toList());
 
-//		uniformsMap.put(UniformType.FLOAT, floats);
-			uniformsMap.put(UniformType.VEC2, vec2s);
+//			uniformsMap.put(UniformType.FLOAT, floats);
+//			uniformsMap.put(UniformType.VEC2, vec2s);
 			uniformsMap.put(UniformType.SAMPLER_2D, uniformTextures);
 		}
 
 		uniformsMap.put(UniformType.MAT4, mat4s);
 		uniformsHandler.updateUniformsValues(shader, uniformsMap);
+
+//		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 		enableVertexAttribArrays();
 		glDrawElements(GL_TRIANGLES, model.getVertexCount(), GL_UNSIGNED_INT, 0);
@@ -72,9 +74,9 @@ public class ModelRenderer {
 	}
 	
 	private void enableVertexAttribArrays() {
-		glEnableVertexAttribArray(0);//position
-		glEnableVertexAttribArray(1);//color
-		glEnableVertexAttribArray(2);//texture coords
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
 	}
 	
 	private void disableVertexAttribArrays() {

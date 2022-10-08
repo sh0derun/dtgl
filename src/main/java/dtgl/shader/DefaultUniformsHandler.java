@@ -20,14 +20,14 @@ public class DefaultUniformsHandler implements UniformsHandler{
     public void updateUniformsValues(Shader shader, EnumMap<UniformType, List<Uniform>> uniformsMap) {
         uniformsMap.forEach((uniformType, uniforms) -> {
             switch (uniformType) {
-                case FLOAT : uniforms.forEach(uniform -> shader.setUniformFloat(uniform.getName(), (Float) uniform.getValue()));break;
-                case VEC2 : uniforms.forEach(uniform -> shader.setUniformVec2(uniform.getName(), (Vec2) uniform.getValue()));break;
-                case VEC4 : uniforms.forEach(uniform -> shader.setUniformVec4(uniform.getName(), (Vec4) uniform.getValue()));break;
-                case MAT4 : uniforms.forEach(uniform -> shader.setUniformMat4(uniform.getName(), (Mat4) uniform.getValue()));break;
+                case FLOAT : uniforms.forEach(uniform -> shader.setUniform(uniform.getName(), (Float) uniform.getValue()));break;
+                case VEC2 : uniforms.forEach(uniform -> shader.setUniform(uniform.getName(), (Vec2) uniform.getValue()));break;
+                case VEC4 : uniforms.forEach(uniform -> shader.setUniform(uniform.getName(), (Vec4) uniform.getValue()));break;
+                case MAT4 : uniforms.forEach(uniform -> shader.setUniform(uniform.getName(), (Mat4) uniform.getValue()));break;
                 case SAMPLER_2D :
                     for(int i = 0; i < uniforms.size(); i++) {
                         Uniform textureUniform = uniforms.get(i);
-                        shader.setUniformInt(textureUniform.getName(), i);
+                        shader.setUniform(textureUniform.getName(), i);
                         glActiveTexture(GL_TEXTURE0+i);
                         glBindTexture(GL_TEXTURE_2D, ((Texture) textureUniform.getValue()).getId());
                     }

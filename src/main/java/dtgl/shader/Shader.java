@@ -7,7 +7,9 @@ import dtgl.math.Vec2;
 import dtgl.math.Vec3;
 import dtgl.math.Vec4;
 import dtgl.utils.FileUtils;
+import org.lwjgl.BufferUtils;
 
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,6 +73,11 @@ public class Shader {
 		glDeleteShader(vsId);
 		glDeleteShader(fsId);
 
+		IntBuffer intBuffer = BufferUtils.createIntBuffer(1);
+		glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, intBuffer);
+
+		System.out.println(intBuffer.get());
+
 		return programId;
 	}
 
@@ -87,7 +94,7 @@ public class Shader {
 		return shaderId;
 	}
 
-	private int getUniformLocation(String name) {
+	public int getUniformLocation(String name) {
 		if(!locationsMap.containsKey(name)){
 			int location = glGetUniformLocation(programId, name);
 			if(location == -1) {
@@ -98,27 +105,27 @@ public class Shader {
 		return locationsMap.get(name);
 	}
 
-	public void setUniformFloat(String name, float x){
+	public void setUniform(String name, float x){
 		glUniform1f(getUniformLocation(name), x);
 	}
 
-	public void setUniformVec2(String name, Vec2 vec2){
+	public void setUniform(String name, Vec2 vec2){
 		glUniform2fv(getUniformLocation(name), vec2.getCoords());
 	}
 	
-	public void setUniformVec3(String name, Vec3 vec3){
+	public void setUniform(String name, Vec3 vec3){
 		glUniform3fv(getUniformLocation(name), vec3.getCoords());
 	}
 	
-	public void setUniformVec4(String name, Vec4 vec4){
+	public void setUniform(String name, Vec4 vec4){
 		glUniform4fv(getUniformLocation(name), vec4.getCoords());
 	}
 	
-	public void setUniformMat4(String name, Mat4 mat4){
+	public void setUniform(String name, Mat4 mat4){
 		glUniformMatrix4fv(getUniformLocation(name), false, mat4.getValues());
 	}
 	
-	public void setUniformInt(String name, int i){
+	public void setUniform(String name, int i){
 		glUniform1i(getUniformLocation(name), i);
 	}
 	

@@ -8,15 +8,18 @@ import dtgl.model.ModelLoader;
 import dtgl.model.ModelRenderer;
 import dtgl.model.Texture;
 import dtgl.shader.Shader;
-import dtgl.utils.OBJModelLoader;
+import dtgl.utils.obj.OBJModel;
+import dtgl.utils.obj.OBJModelLoader;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL30.GL_LUMINANCE;
 
 public class Main {
@@ -28,9 +31,7 @@ public class Main {
 
 		ModelLoader loader = new ModelLoader();
 
-		OBJModelLoader.LoadModelDataFromOBJ("res/cube.obj");
-
-		Texture texture = new Texture("res/2037089.png", "texture2", GL_RGBA, GL_RGBA8);
+		/*Texture texture = new Texture("res/2037089.png", "texture2", GL_RGBA, GL_RGBA8);
 		Texture texture1 = new Texture("res/bvb.png", "texture2", GL_RGBA, GL_RGBA8);
 		Texture texture2 = new Texture("res/checker.png", "texture2", GL_LUMINANCE, GL_LUMINANCE);
 
@@ -61,14 +62,26 @@ public class Main {
 			}
 		}
 
+		for (int i = 0; i < positions.size(); i++){
+			Model cube = cubess[i%cubess.length];
+			System.out.println(cube.getTextures().isPresent() ? cube.getTextures().get()[0].getTexturePath() : "NONE");
+		}
+
 		Shader cubeShader = new Shader("shaders/vs.glsl", "shaders/fscube.glsl");
 		Shader shader = new Shader("shaders/vs.glsl", "shaders/fs1.glsl");
+*/
+		Shader shader = new Shader("shaders/vs_isosphere.glsl", "shaders/fs_isosphere.glsl");
+
+		OBJModel objModel = OBJModelLoader.LoadModelDataFromOBJ("res/isosphere.obj");
+		Model model = loader.load(objModel, null);
+		model.setScale(2);
+
 		ModelRenderer renderer = new ModelRenderer(window);
 
 		while(!window.isClosed()) {
 			float time = (float)GLFW.glfwGetTime();
 			window.clear();
-			for(int i = 0; i < positions.size(); i++){
+			/*for(int i = 0; i < positions.size(); i++){
 				Model cube = cubess[i%cubess.length];
 				cube.setPos(positions.get(i));
 				cube.setRot(new Vec3(time*20,time*20, time*20));
@@ -81,7 +94,13 @@ public class Main {
 					renderer.render(cube, shader, window);
 					shader.deactivate();
 				}
-			}
+			}*/
+
+			model.setRot(new Vec3(time*20,time*20, time*20));
+			shader.activate();
+			renderer.render(model, shader, window);
+			shader.deactivate();
+
 			window.update();
 			if(listener.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
 				break;

@@ -1,5 +1,6 @@
 package dtgl.model;
 
+import dtgl.utils.obj.OBJModel;
 import org.lwjgl.opengl.GL30;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -16,34 +17,52 @@ public class ModelLoader {
 	private List<Integer> vaoList = new ArrayList<>(),
 						  vboList = new ArrayList<>(),
 						  eboList = new ArrayList<>();
-	
 
-	public Model load(float[] positions, int[] indices, Texture[] textures) {
+	public Model load(OBJModel model, Texture[] textures){
 		int vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 		vaoList.add(vao);
-		
+
+		int ebo = glGenBuffers();
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		eboList.add(ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, intArrayToIntBuffer(model.getIndices()), GL_STATIC_DRAW);
+
+		createAndLoadVBO(0, 3, model.getPositions());
+		createAndLoadVBO(1, 2, model.getTextureCoords());
+		createAndLoadVBO(2, 3, model.getNormals());
+
+		glBindVertexArray(0);
+
+		return textures == null ? new PrimitiveModel(vao, model.getIndices().length) : new TexturedModel(vao, model.getIndices().length, textures);
+	}
+
+	public Model load(float[] vertices, int[] indices, Texture[] textures) {
+		int vao = glGenVertexArrays();
+		glBindVertexArray(vao);
+		vaoList.add(vao);
+
 		int vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		vboList.add(vbo);
-		glBufferData(GL_ARRAY_BUFFER, floatArrayToFloatBuffer(positions), GL_STATIC_DRAW);
-		
+		glBufferData(GL_ARRAY_BUFFER, floatArrayToFloatBuffer(vertices), GL_STATIC_DRAW);
+
 		int ebo = glGenBuffers();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 		eboList.add(ebo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, intArrayToIntBuffer(indices), GL_STATIC_DRAW);
-		
+
 		int posSize = 3, colSize = 4, texSize = 2, vertexSizeBytes = (posSize+colSize+texSize)*Float.BYTES;
-		
+
 		glVertexAttribPointer(0, posSize, GL_FLOAT, false, vertexSizeBytes, 0);
 		glEnableVertexAttribArray(0);
-		
+
 		glVertexAttribPointer(1, colSize, GL_FLOAT, false, vertexSizeBytes, posSize * Float.BYTES);
 		glEnableVertexAttribArray(1);
-	   
+
 		glVertexAttribPointer(2, texSize, GL_FLOAT, false, vertexSizeBytes, (posSize+colSize) * Float.BYTES);
 		glEnableVertexAttribArray(2);
-		
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 		
@@ -85,6 +104,15 @@ public class ModelLoader {
 		};
 
 		return this.load(cube, cubeElements, textures);
+	}
+
+	private void createAndLoadVBO(int attributeId, int dataSize, float[] data){
+		int vbo = glGenBuffers();
+		vboList.add(vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, floatArrayToFloatBuffer(data), GL_STATIC_DRAW);
+		glVertexAttribPointer(attributeId, dataSize, GL_FLOAT, false, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 	public void clean() {
