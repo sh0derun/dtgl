@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface UniformsHandler {
 
-    default void updateUniformsValues(Shader shader, EnumMap<UniformType, List<Uniform>> uniformsMap) {}
+    void updateUniformsValues(Shader shader, EnumMap<UniformType, List<Uniform>> uniformsMap);
+    void updateUniformsValues(Shader shader, List<Uniform> uniforms);
 
 }

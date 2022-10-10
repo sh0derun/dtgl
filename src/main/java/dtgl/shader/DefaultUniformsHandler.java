@@ -38,4 +38,26 @@ public class DefaultUniformsHandler implements UniformsHandler{
         });
     }
 
+    @Override
+    public void updateUniformsValues(Shader shader, List<Uniform> uniforms) {
+        uniforms.forEach(uniform -> {
+            switch (uniform.getType()) {
+                case FLOAT : shader.setUniform(uniform.getName(), (Float) uniform.getValue());break;
+                case VEC2 : shader.setUniform(uniform.getName(), (Vec2) uniform.getValue());break;
+                case VEC4 : shader.setUniform(uniform.getName(), (Vec4) uniform.getValue());break;
+                case MAT4 : shader.setUniform(uniform.getName(), (Mat4) uniform.getValue());break;
+                case SAMPLER_2D :
+                    for(int i = 0; i < uniforms.size(); i++) {
+                        Uniform textureUniform = uniforms.get(i);
+                        shader.setUniform(textureUniform.getName(), i);
+                        glActiveTexture(GL_TEXTURE0+i);
+                        glBindTexture(GL_TEXTURE_2D, ((Texture) textureUniform.getValue()).getId());
+                    }
+                    break;
+                default:
+                    throw new ApplicationRuntimeException("uniform type not handled !");
+            }
+        });
+    }
+
 }

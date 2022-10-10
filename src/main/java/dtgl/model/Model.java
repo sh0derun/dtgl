@@ -8,6 +8,7 @@ import java.util.Optional;
 public abstract class Model {
 	
 	protected int vao;
+	protected int[] attributesIndices;
 	protected int vertexCount;
 	protected float angle;
 	protected Vec3 pos, rot;
@@ -15,6 +16,10 @@ public abstract class Model {
 
 	public int getVao() {
 		return vao;
+	}
+
+	public int[] getAttributesIndices() {
+		return attributesIndices;
 	}
 
 	public int getVertexCount() {

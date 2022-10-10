@@ -8,7 +8,7 @@ public class TexturedModel extends Model{
 
     private Texture[] textures;
 
-    public TexturedModel(int vao, int vertexCount, Texture[] textures){
+    public TexturedModel(int vao, int vertexCount, Texture[] textures, int[] ids){
         this.vao = vao;
         this.vertexCount = vertexCount;
         pos = new Vec3();
@@ -22,6 +22,7 @@ public class TexturedModel extends Model{
                     texture.loadTexture();
                 }
         }
+        this.attributesIndices = ids;
     }
 
     public Optional<Texture[]> getTextures() {

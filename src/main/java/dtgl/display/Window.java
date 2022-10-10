@@ -93,6 +93,10 @@ public class Window {
 		glfwSwapBuffers(windowId);
 	}
 
+	public long getWindowId(){
+		return windowId;
+	}
+
 	public int getWidth() {
 		return width;
 	}

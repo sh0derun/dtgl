@@ -40,14 +40,14 @@ public class FileUtils {
 				reader.setInput(iis, true);
 				IIOMetadata metadata = reader.getImageMetadata(0);
 				IIOMetadataNode metaTree = (IIOMetadataNode) metadata.getAsTree("javax_imageio_1.0");
-				displayMetadata(metaTree);
+				FileUtils.displayMetadata(metaTree);
 			}
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 		}
 	}
 
-	public static void displayMetadata(IIOMetadataNode tree) {
+	private static void displayMetadata(IIOMetadataNode tree) {
 		if(tree == null)
 			return;
 		else if(tree.getChildNodes() == null) {
