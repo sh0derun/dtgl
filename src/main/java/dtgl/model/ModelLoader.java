@@ -13,7 +13,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelLoader {
+public final class ModelLoader {
 
 	private List<Integer> vaoList = new ArrayList<>(),
 						  vboList = new ArrayList<>(),

@@ -3,7 +3,6 @@ package dtgl.renderer;
 import dtgl.display.Window;
 import dtgl.model.Model;
 import dtgl.model.ModelLogic;
-import dtgl.shader.Shader;
 import dtgl.shader.UniformsHandler;
 
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;

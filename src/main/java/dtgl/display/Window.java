@@ -3,6 +3,7 @@ package dtgl.display;
 import dtgl.display.listener.Listener;
 import dtgl.exception.ApplicationRuntimeException;
 import org.lwjgl.Version;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -80,6 +81,10 @@ public class Window {
 
 	public boolean isClosed() {
 		return glfwWindowShouldClose(windowId);
+	}
+
+	public void close(){
+		glfwSetWindowShouldClose(windowId, true);
 	}
 
 	public void clear() {
