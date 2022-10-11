@@ -1,6 +1,8 @@
-package dtgl.model;
+package dtgl.renderer;
 
 import dtgl.display.Window;
+import dtgl.model.Model;
+import dtgl.model.ModelLogic;
 import dtgl.shader.Shader;
 import dtgl.shader.UniformsHandler;
 
@@ -15,7 +17,7 @@ public abstract class AbstractRenderer {
         uniformsHandler = handler;
     }
 
-    public abstract void render(Model model, Shader shader, Window window);
+    public abstract void render(Model model, Window window, ModelLogic modelLogic);
 
     protected void enableVertexAttribArrays(int... indices) {
         for (int index : indices) {

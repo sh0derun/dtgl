@@ -1,6 +1,7 @@
 package dtgl.model;
 
 import dtgl.math.Vec3;
+import dtgl.shader.Shader;
 
 import java.util.Optional;
 
@@ -8,7 +9,7 @@ public class TexturedModel extends Model{
 
     private Texture[] textures;
 
-    public TexturedModel(int vao, int vertexCount, Texture[] textures, int[] ids){
+    public TexturedModel(int vao, int vertexCount, Texture[] textures, int[] ids, Shader shader){
         this.vao = vao;
         this.vertexCount = vertexCount;
         pos = new Vec3();
@@ -23,6 +24,7 @@ public class TexturedModel extends Model{
                 }
         }
         this.attributesIndices = ids;
+        this.shader = shader;
     }
 
     public Optional<Texture[]> getTextures() {

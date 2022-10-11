@@ -2,6 +2,7 @@ package dtgl.model;
 
 
 import dtgl.math.Vec3;
+import dtgl.shader.Shader;
 
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ public abstract class Model {
 	protected float angle;
 	protected Vec3 pos, rot;
 	protected float scale;
+	protected Shader shader;
 
 	public int getVao() {
 		return vao;
@@ -60,5 +62,13 @@ public abstract class Model {
 
 	public float getAngle() {
 		return angle;
+	}
+
+	public Shader getShader() {
+		return shader;
+	}
+
+	public void setShader(Shader shader) {
+		this.shader = shader;
 	}
 }

@@ -1,5 +1,6 @@
 package dtgl.model;
 
+import dtgl.shader.Shader;
 import dtgl.utils.obj.OBJModel;
 import org.lwjgl.opengl.GL30;
 
@@ -18,7 +19,7 @@ public class ModelLoader {
 						  vboList = new ArrayList<>(),
 						  eboList = new ArrayList<>();
 
-	public Model load(OBJModel model, Texture[] textures){
+	public Model load(OBJModel model, Texture[] textures, Shader shader){
 		int vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 		vaoList.add(vao);
@@ -31,10 +32,10 @@ public class ModelLoader {
 
 		glBindVertexArray(0);
 
-		return textures == null ? new PrimitiveModel(vao, model.getIndices().length, new int[]{0,1,2}) : new TexturedModel(vao, model.getIndices().length, textures, new int[]{0,1,2});
+		return textures == null ? new PrimitiveModel(vao, model.getIndices().length, new int[]{0,1,2}, shader) : new TexturedModel(vao, model.getIndices().length, textures, new int[]{0,1,2}, shader);
 	}
 
-	public Model load(float[] vertices, int[] indices, Texture[] textures) {
+	public Model load(float[] vertices, int[] indices, Texture[] textures, Shader shader) {
 		int vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 		vaoList.add(vao);
@@ -60,10 +61,10 @@ public class ModelLoader {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		return textures == null ? new PrimitiveModel(vao, indices.length, new int[]{0,1,2}) : new TexturedModel(vao, indices.length, textures, new int[]{0,1,2});
+		return textures == null ? new PrimitiveModel(vao, indices.length, new int[]{0,1,2}, shader) : new TexturedModel(vao, indices.length, textures, new int[]{0,1,2}, shader);
 	}
 
-	public Model loadCube(float size, Texture[] textures){
+	public Model loadCube(float size, Texture[] textures, Shader shader){
 		float[] cube = {
 				-size, -size,  size, 1.0f, 0.0f, 0.0f, 1, 1.0f, 1.0f,
 				size, -size,  size, 0.0f, 1.0f, 0.0f, 1, 1.0f, 0.0f,
@@ -91,7 +92,7 @@ public class ModelLoader {
 				3, 2, 6,6, 7, 3
 		};
 
-		return this.load(cube, cubeElements, textures);
+		return this.load(cube, cubeElements, textures, shader);
 	}
 
 	private void createAndLoadVBO(int attributeId, int dataSize, float[] data){
