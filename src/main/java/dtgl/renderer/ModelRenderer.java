@@ -5,7 +5,6 @@ import dtgl.math.Mat4;
 import dtgl.math.Vec3;
 import dtgl.model.Camera;
 import dtgl.model.Model;
-import dtgl.model.ModelLogic;
 import dtgl.model.Texture;
 import dtgl.shader.DefaultUniformsHandler;
 import dtgl.shader.Shader;
@@ -29,10 +28,10 @@ public class ModelRenderer extends AbstractRenderer{
 		super(new DefaultUniformsHandler());
 	}
 	
-	public void render(Model model, Window window, ModelLogic modelLogic) {
+	public void render(Model model) {
 		GL30.glBindVertexArray(model.getVao());
 
-		modelLogic.logic();
+		model.getShader().activate();
 
 		List<Uniform> uniforms = getUniformList(model, window);
 
@@ -41,6 +40,8 @@ public class ModelRenderer extends AbstractRenderer{
 		enableVertexAttribArrays(model.getAttributesIndices());
 		GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 		disableVertexAttribArrays(model.getAttributesIndices());
+
+		model.getShader().deactivate();
 
 		GL30.glBindVertexArray(0);
 	}

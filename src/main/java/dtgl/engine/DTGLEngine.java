@@ -2,7 +2,6 @@ package dtgl.engine;
 
 import dtgl.display.Window;
 import dtgl.display.listener.Listener;
-import dtgl.math.Vec3;
 import dtgl.model.Model;
 import dtgl.model.ModelLoader;
 import dtgl.renderer.AbstractRenderer;
@@ -17,17 +16,21 @@ import java.util.List;
 **/
 public class DTGLEngine {
 
-    private Window window = Window.getInstance();
     private Listener listener = Listener.getInstance();
     private ModelLoader modelLoader;
     private AbstractRenderer renderer;
+    private Window window;
+    private EngineLogic engineLogic;
 
     private List<Model> models;
 
-    public DTGLEngine(AbstractRenderer abstractRenderer, EngineSetup engineSetup){
+    public DTGLEngine(AbstractRenderer abstractRenderer, EngineSetup engineSetup, EngineLogic logic){
         modelLoader = new ModelLoader();
         renderer = abstractRenderer;
         models = new ArrayList<>();
+        window = renderer.getWindow();
+        engineLogic = logic;
+
         loadResources(engineSetup);
     }
 
@@ -50,12 +53,7 @@ public class DTGLEngine {
     }
 
     public void process(float time){
-        for (Model model : models) {
-            model.getShader().activate();
-            // TODO: 12/10/2022 Model logic needs to be declared by user
-            renderer.render(model, window, ()->model.setRot(new Vec3(time*20,time*20, time*20)));
-            model.getShader().deactivate();
-        }
+        engineLogic.logic(renderer, time);
     }
 
     private void addObject(Model object){
