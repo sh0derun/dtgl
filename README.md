@@ -4,9 +4,9 @@ A 3D java engine.
 
 ## What does handle
 
-1. window creation offering opengl context,
-2. for can generates only textured cubes or just colored,
-3. shaders support,
+1. Window creation offering opengl context,
+2. Generates textured cubes or just colored, loading model from OBJ file
+3. Shaders support,
 4. Matrices and vectors maths,
 
 ## Based on which libs
