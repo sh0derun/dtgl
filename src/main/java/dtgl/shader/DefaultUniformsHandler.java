@@ -3,6 +3,7 @@ package dtgl.shader;
 import dtgl.exception.ApplicationRuntimeException;
 import dtgl.math.Mat4;
 import dtgl.math.Vec2;
+import dtgl.math.Vec3;
 import dtgl.math.Vec4;
 import dtgl.model.Texture;
 
@@ -44,6 +45,7 @@ public class DefaultUniformsHandler implements UniformsHandler{
             switch (uniform.getType()) {
                 case FLOAT : shader.setUniform(uniform.getName(), (Float) uniform.getValue());break;
                 case VEC2 : shader.setUniform(uniform.getName(), (Vec2) uniform.getValue());break;
+                case VEC3 : shader.setUniform(uniform.getName(), (Vec3) uniform.getValue());break;
                 case VEC4 : shader.setUniform(uniform.getName(), (Vec4) uniform.getValue());break;
                 case MAT4 : shader.setUniform(uniform.getName(), (Mat4) uniform.getValue());break;
                 case SAMPLER_2D :

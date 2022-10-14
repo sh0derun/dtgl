@@ -33,7 +33,7 @@ public class ModelRenderer extends AbstractRenderer{
 
 		model.getShader().activate();
 
-		List<Uniform> uniforms = getUniformList(model, window);
+		List<Uniform> uniforms = getUniformList(model, window, model.getUniforms());
 
 		uniformsHandler.updateUniformsValues(model.getShader(), uniforms);
 
@@ -46,21 +46,13 @@ public class ModelRenderer extends AbstractRenderer{
 		GL30.glBindVertexArray(0);
 	}
 
-	private List<Uniform> getUniformList(Model model, Window window) {
-		double time = GLFW.glfwGetTime();
-
-		float radius = 5.0f;
-		float camX = (float) (Math.cos(time) * radius);
-		float camY = 0;
-		float camZ = (float) (Math.sin(time) * radius) + (float) (Math.cos(time * 0.5) * radius * 0.5f);
-
-		camera.setPos(new Vec3(camX, camY, camZ));
+	private List<Uniform> getUniformList(Model model, Window window, List<Uniform> uniforms) {
 
 		Mat4 projection = Mat4.perspective(70, 1.0f * window.getWidth() / window.getHeight(), 0.1f, 30);
 
-		List<Uniform> uniforms = new ArrayList<>(Arrays.asList(
+		List<Uniform> requiredUniforms = new ArrayList<>(Arrays.asList(
 				new Uniform(UniformType.MAT4, "model", Mat4.getTransformationMat(model.getPos(), model.getRot(), model.getAngle(), model.getScale())),
-				new Uniform(UniformType.MAT4, "view", /*Mat4.lookAt(camera.getPos(), camera.getTarget(), Vec3.UP)*/Mat4.translate(Vec3.TOWARD.mult(-10))),
+				new Uniform(UniformType.MAT4, "view", Mat4.translate(Vec3.TOWARD.mult(-10))),
 				new Uniform(UniformType.MAT4, "projection", projection)));
 
 		List<Uniform> uniformTextures = Arrays.stream(model.getTextures().orElse(new Texture[]{}))
@@ -70,10 +62,28 @@ public class ModelRenderer extends AbstractRenderer{
 		uniforms.addAll(uniformTextures);
 
 		if (model.getShader().inError) {
-			uniforms.add(new Uniform(UniformType.VEC4, "error_color", Shader.ERROR_COLOR));
+			requiredUniforms.add(new Uniform(UniformType.VEC4, "error_color", Shader.ERROR_COLOR));
+		}
+		else {
+			Uniform lightColor = new Uniform(UniformType.VEC3, "light_color", new Vec3(1, 1, 1));
+			requiredUniforms.add(lightColor);
+
+			double time = GLFW.glfwGetTime();
+
+			float radius = 20.0f;
+			float lightPosX = (float) (Math.sin(time) * radius) * (float) (Math.cos(time) * radius);
+			float lightPosY = (float) (Math.sin(time) * radius) * (float) (Math.sin(time) * radius);
+			float lightPosZ = (float) (Math.cos(time) * radius);
+
+			Uniform lightPos = new Uniform(UniformType.VEC3, "light_pos", new Vec3(0, 0, 7)/*new Vec3((float) (Math.cos(time) * 5), (float) (Math.sin(time) * 5), 7)*/);
+			requiredUniforms.add(lightPos);
+
+			requiredUniforms.addAll(uniforms);
 		}
 
-		return uniforms;
+
+
+		return requiredUniforms;
 	}
 
 

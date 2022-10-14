@@ -3,7 +3,9 @@ package dtgl.model;
 
 import dtgl.math.Vec3;
 import dtgl.shader.Shader;
+import dtgl.shader.Uniform;
 
+import java.util.List;
 import java.util.Optional;
 
 public abstract class Model {
@@ -15,6 +17,7 @@ public abstract class Model {
 	protected Vec3 pos, rot;
 	protected float scale;
 	protected Shader shader;
+	protected List<Uniform> uniforms;
 
 	public int getVao() {
 		return vao;
@@ -71,4 +74,12 @@ public abstract class Model {
 	public void setShader(Shader shader) {
 		this.shader = shader;
 	}
+
+    public List<Uniform> getUniforms() {
+        return uniforms;
+    }
+
+    public void setUniforms(List<Uniform> uniforms) {
+        this.uniforms = uniforms;
+    }
 }

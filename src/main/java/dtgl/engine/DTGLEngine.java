@@ -43,8 +43,8 @@ public class DTGLEngine {
             float time = (float)GLFW.glfwGetTime();
             window.clear();
 
-            process(time);
             handleInputs();
+            process(time);
 
             window.update();
         }
