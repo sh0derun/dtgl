@@ -16,8 +16,8 @@ struct Material{
     vec3 specular;
 };
 
-Material getPhongMaterial(vec3 lightColor, vec3 lightPos, float ambientStrength, float shininess){
-    vec3 ambientComponent = ambientStrength * light_color;
+Material getPhongMaterial(vec3 lightColor, vec3 lightPos, float shininess){
+    vec3 ambientComponent = vec3(0.1);
 
     vec3 lightDir = normalize(lightPos - outPosition);
     float normalLightAngle = max(0, dot(outNormal, lightDir));
@@ -32,6 +32,6 @@ Material getPhongMaterial(vec3 lightColor, vec3 lightPos, float ambientStrength,
 }
 
 void main() {
-    Material phongRes = getPhongMaterial(light_color, light_pos, 0.1, 15);
+    Material phongRes = getPhongMaterial(light_color, light_pos, 15);
     FragColor = vec4(model_color * (phongRes.ambient + phongRes.diffuse + phongRes.specular), 1);
 }
