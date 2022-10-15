@@ -1,5 +1,6 @@
 package dtgl.shader;
 
+import dtgl.engine.component.material.PhongMaterial;
 import dtgl.engine.component.PointLight;
 import dtgl.exception.ApplicationRuntimeException;
 import dtgl.math.Mat4;
@@ -57,10 +58,14 @@ public class DefaultUniformsHandler implements UniformsHandler{
                 }
                     break;
                 case POINT_LIGHT : shader.setUniform(uniform.getName(), (PointLight) uniform.getValue());break;
+                case PHONG_MATERIAL:
+                    shader.setUniform(uniform.getName(), (PhongMaterial) uniform.getValue());
+                    break;
                 default:
                     throw new ApplicationRuntimeException("uniform type not handled !");
             }
         });
+
     }
 
 }

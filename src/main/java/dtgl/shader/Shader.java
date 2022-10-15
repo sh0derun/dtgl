@@ -2,6 +2,7 @@ package dtgl.shader;
 
 import dtgl.engine.component.Light;
 import dtgl.engine.component.PointLight;
+import dtgl.engine.component.material.PhongMaterial;
 import dtgl.exception.ApplicationRuntimeException;
 import dtgl.exception.ShaderException;
 import dtgl.math.Mat4;
@@ -133,6 +134,13 @@ public class Shader {
 			glUniform3fv(getUniformLocation(name+".position"), pointLight.getPosition().getCoords());
 			glUniform3fv(getUniformLocation(name+".color"), pointLight.getColor().getCoords());
 		}
+	}
+
+	public void setUniform(String name, PhongMaterial material) {
+		glUniform3fv(getUniformLocation(name + ".ambient"), material.getAmbient().getCoords());
+		glUniform3fv(getUniformLocation(name + ".diffuse"), material.getDiffuse().getCoords());
+		glUniform3fv(getUniformLocation(name + ".specular"), material.getSpecular().getCoords());
+		glUniform1f(getUniformLocation(name + ".shininess"), material.getShininess());
 	}
 
 	public void setUniform(String name, int i){

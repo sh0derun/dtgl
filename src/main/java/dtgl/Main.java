@@ -2,6 +2,8 @@ package dtgl;
 
 import dtgl.engine.DTGLEngine;
 import dtgl.engine.EngineSetup;
+import dtgl.engine.component.material.PhongMaterial;
+import dtgl.engine.component.material.PhongMaterialConstants;
 import dtgl.math.Vec3;
 import dtgl.model.Model;
 import dtgl.model.ModelLoader;
@@ -26,14 +28,18 @@ public class Main {
 
 		List<Model> models = new ArrayList<>();
 		final int COUNT = 16;
-		Vec3[] renderedModelsColors = new Vec3[COUNT];
+		PhongMaterial[] renderedModelsColors = new PhongMaterial[COUNT];
 		Random rnd = new Random();
 
 		BiFunction<Float, Float, Float> getRandomFloat = (min, max)->min + rnd.nextFloat() * (max - min);
 
 		for (int i = 0; i < COUNT; i++) {
-			renderedModelsColors[i] = new Vec3(getRandomFloat.apply(0f, 1f), getRandomFloat.apply(0f, 1f),getRandomFloat.apply(0f, 1f));
+			renderedModelsColors[i] = PhongMaterialConstants.materials[rnd.nextInt(PhongMaterialConstants.materials.length)];
 		}
+
+		PhongMaterial material = new PhongMaterial("gold", new Vec3(0.24725f,0.1995f,0.0745f),
+				new Vec3(0.75164f, 0.60648f,	0.22648f),
+				new Vec3(0.628281f, 0.555802f, 0.366065f),51.2f);
 
 		EngineSetup engineSetup = (ModelLoader modelLoader)->{
 			Shader shader = new Shader("shaders/vs_icosphere.glsl", "shaders/fs_icosphere.glsl");
@@ -51,7 +57,7 @@ public class Main {
 						for(int k = 0; k < 4; k++) {
 							model.setPos(new Vec3((i - 1.5f) * 2, (j - 1.5f) * 2, (k - 1.5f) * 2));
 							model.setRot(new Vec3(time * 5, time * 10, time * 15));
-							Uniform modelColor = new Uniform(UniformType.VEC3, "model_color", renderedModelsColors[j + i + k * 3]);
+							Uniform modelColor = new Uniform(UniformType.PHONG_MATERIAL, "model_material", /*material*/renderedModelsColors[j + i + k * 3]);
 							model.setUniforms(Arrays.asList(modelColor));
 							renderer.render(model);
 						}

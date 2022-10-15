@@ -44,7 +44,7 @@ public class FileUtils {
 		try (BufferedReader resourceReader = new BufferedReader(new FileReader(resource.getPath()))) {
 			res = resourceReader.lines().collect(Collectors.joining("\n"));
 		} catch (FileNotFoundException ex) {
-			System.out.println(include + " : there is no include file or directory");
+			System.out.println(include + " : no such  file or directory");
 		} catch (IOException ioException) {
 			System.out.println("cannot load file "+include+" !");
 			System.out.println(ioException.getMessage());
