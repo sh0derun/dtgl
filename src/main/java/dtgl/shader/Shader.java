@@ -1,5 +1,7 @@
 package dtgl.shader;
 
+import dtgl.engine.component.Light;
+import dtgl.engine.component.PointLight;
 import dtgl.exception.ApplicationRuntimeException;
 import dtgl.exception.ShaderException;
 import dtgl.math.Mat4;
@@ -29,8 +31,8 @@ public class Shader {
 	private static final String ERROR_FS = "shaders/FS_ERROR.glsl";
 	public static final Vec4 ERROR_COLOR = new Vec4(0,1,0,1);
 
-	int programId;
-	String vsPath, fsPath;
+	private int programId;
+	private String vsPath, fsPath;
 	public boolean inError;
 	private static final String NO_UNIFORM_NAME_ERROR = "no uniform name found ";
 
@@ -48,8 +50,8 @@ public class Shader {
 		int vsId = -1, fsId = -1;
 
 		try {
-			String vsSource = FileUtils.loadFile(vsPath);
-			String fsSource = FileUtils.loadFile(fsPath);
+			String vsSource = FileUtils.loadShaderFile(vsPath);
+			String fsSource = FileUtils.loadShaderFile(fsPath);
 
 			vsId = createCompileAttachShader(GL_VERTEX_SHADER, vsPath, vsSource, programId);
 			fsId = createCompileAttachShader(GL_FRAGMENT_SHADER, fsPath, fsSource, programId);
@@ -61,8 +63,8 @@ public class Shader {
 			glDeleteShader(fsId);
 
 			programId = glCreateProgram();
-			vsId = createCompileAttachShader(GL_VERTEX_SHADER, ERROR_VS, FileUtils.loadFile(ERROR_VS), programId);
-			fsId = createCompileAttachShader(GL_FRAGMENT_SHADER, ERROR_FS, FileUtils.loadFile(ERROR_FS), programId);
+			vsId = createCompileAttachShader(GL_VERTEX_SHADER, ERROR_VS, FileUtils.loadShaderFile(ERROR_VS), programId);
+			fsId = createCompileAttachShader(GL_FRAGMENT_SHADER, ERROR_FS, FileUtils.loadShaderFile(ERROR_FS), programId);
 
 			System.out.println(e.getMessage());
 		}
@@ -120,15 +122,23 @@ public class Shader {
 	public void setUniform(String name, Vec4 vec4){
 		glUniform4fv(getUniformLocation(name), vec4.getCoords());
 	}
-	
+
 	public void setUniform(String name, Mat4 mat4){
 		glUniformMatrix4fv(getUniformLocation(name), false, mat4.getValues());
 	}
-	
+
+	public <L extends Light> void setUniform(String name, L light) {
+		if(light instanceof PointLight){
+			PointLight pointLight = (PointLight) light;
+			glUniform3fv(getUniformLocation(name+".position"), pointLight.getPosition().getCoords());
+			glUniform3fv(getUniformLocation(name+".color"), pointLight.getColor().getCoords());
+		}
+	}
+
 	public void setUniform(String name, int i){
 		glUniform1i(getUniformLocation(name), i);
 	}
-	
+
 	public void activate() {
 		glUseProgram(programId);
 	}
@@ -136,5 +146,4 @@ public class Shader {
 	public void deactivate() {
 		glUseProgram(0);
 	}
-
 }

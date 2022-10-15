@@ -1,6 +1,8 @@
 package dtgl.renderer;
 
 import dtgl.display.Window;
+import dtgl.engine.component.Light;
+import dtgl.engine.component.PointLight;
 import dtgl.math.Mat4;
 import dtgl.math.Vec3;
 import dtgl.model.Camera;
@@ -48,6 +50,12 @@ public class ModelRenderer extends AbstractRenderer{
 
 	private List<Uniform> getUniformList(Model model, Window window, List<Uniform> uniforms) {
 
+		double time = GLFW.glfwGetTime();
+		float radius = 30.0f;
+		float lightPosX = (float) (Math.sin(time) * radius) * (float) (Math.cos(time) * radius);
+		float lightPosY = (float) (Math.sin(time) * radius) * (float) (Math.sin(time) * radius);
+		float lightPosZ = (float) (Math.cos(time) * radius);
+
 		Mat4 projection = Mat4.perspective(70, 1.0f * window.getWidth() / window.getHeight(), 0.1f, 30);
 
 		List<Uniform> requiredUniforms = new ArrayList<>(Arrays.asList(
@@ -58,25 +66,24 @@ public class ModelRenderer extends AbstractRenderer{
 		List<Uniform> uniformTextures = Arrays.stream(model.getTextures().orElse(new Texture[]{}))
 				.map(texture -> new Uniform(UniformType.SAMPLER_2D, texture.getUniformName(), texture))
 				.collect(Collectors.toList());
-
 		uniforms.addAll(uniformTextures);
 
 		if (model.getShader().inError) {
 			requiredUniforms.add(new Uniform(UniformType.VEC4, "error_color", Shader.ERROR_COLOR));
 		}
 		else {
-			Uniform lightColor = new Uniform(UniformType.VEC3, "light_color", new Vec3(1, 1, 1));
+			Uniform light = new Uniform(UniformType.POINT_LIGHT,
+										"point_light",
+										new PointLight(new Vec3(1, 1, 1),
+										new Vec3((float) (Math.cos(time) * radius), 0, (float) (Math.sin(time) * radius) + 10)));
+
+			requiredUniforms.add(light);
+
+			/*Uniform lightColor = new Uniform(UniformType.VEC3, "light_color", new Vec3(1, 1, 1));
 			requiredUniforms.add(lightColor);
 
-			double time = GLFW.glfwGetTime();
-
-			float radius = 20.0f;
-			float lightPosX = (float) (Math.sin(time) * radius) * (float) (Math.cos(time) * radius);
-			float lightPosY = (float) (Math.sin(time) * radius) * (float) (Math.sin(time) * radius);
-			float lightPosZ = (float) (Math.cos(time) * radius);
-
-			Uniform lightPos = new Uniform(UniformType.VEC3, "light_pos", new Vec3(0, 0, 7)/*new Vec3((float) (Math.cos(time) * 5), (float) (Math.sin(time) * 5), 7)*/);
-			requiredUniforms.add(lightPos);
+			Uniform lightPos = new Uniform(UniformType.VEC3, "light_pos", new Vec3(0, 0, 7)*//*new Vec3((float) (Math.cos(time) * 5), (float) (Math.sin(time) * 5), 7)*//*);
+			requiredUniforms.add(lightPos);*/
 
 			requiredUniforms.addAll(uniforms);
 		}

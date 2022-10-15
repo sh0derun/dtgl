@@ -8,25 +8,48 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class FileUtils {
+
+	private FileUtils(){}
 	
-	public static String loadFile(String path) {
+	public static String loadShaderFile(String path) {
 		String fileContent = null;
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(new File(path)));
-			fileContent = reader.lines().reduce((acc, curr)->acc+"\n"+curr).orElse(null);
+			BufferedReader reader = new BufferedReader(new FileReader(path));
+			fileContent = reader.lines().reduce(
+				(acc, curr) -> acc+"\n"+(curr.startsWith("#include") ? includeProcessor(curr) : curr)
+			).orElse(null);
 			reader.close();
 		} catch (IOException e) {
 			System.out.println("cannot load file "+path+" !");
 			System.out.println(e.getMessage());
 		}
 		return fileContent;
+	}
+
+	private static String includeProcessor(String includeStatement) {
+		String res = "";
+		String include = includeStatement.trim();
+		int s = include.indexOf('<') + 1;
+		int e = include.indexOf('>');
+		include = include.substring(s, e);
+		URL resource = ClassLoader.getSystemResource(include);
+		try (BufferedReader resourceReader = new BufferedReader(new FileReader(resource.getPath()))) {
+			res = resourceReader.lines().collect(Collectors.joining("\n"));
+		} catch (FileNotFoundException ex) {
+			System.out.println(include + " : there is no include file or directory");
+		} catch (IOException ioException) {
+			System.out.println("cannot load file "+include+" !");
+			System.out.println(ioException.getMessage());
+		}
+		return res;
 	}
 
 	public static void getImageMetadata(String imagePath) {
