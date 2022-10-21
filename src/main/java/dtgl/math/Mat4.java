@@ -115,12 +115,11 @@ public class Mat4 {
 		float x = rotation.getCoords()[0];
 		float y = rotation.getCoords()[1];
 		float z = rotation.getCoords()[2];
-//		transformation = Mat4.rotate(rotationAngle, rotation).mult(transformation);
-		transformation = Mat4.translate(translation).mult(transformation);
-		transformation = Mat4.rotate(x, new Vec3(1,0,0)).mult(transformation);//Mat4.rotZ(rotation.coords[0]).mult(Mat4.rotY(rotation.coords[1]).mult(Mat4.rotX(rotation.coords[2]))).mult(transformation);
+		transformation = Mat4.scale(scale).mult(transformation);
+		transformation = Mat4.rotate(x, new Vec3(1,0,0)).mult(transformation);
 		transformation = Mat4.rotate(y, new Vec3(0,1,0)).mult(transformation);
 		transformation = Mat4.rotate(z, new Vec3(0,0,1)).mult(transformation);
-		transformation = Mat4.scale(scale).mult(transformation);
+		transformation = Mat4.translate(translation).mult(transformation);
 		return transformation;
 	}
 
