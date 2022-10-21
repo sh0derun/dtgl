@@ -1,5 +1,6 @@
 package dtgl.model;
 
+import dtgl.math.Vec3;
 import dtgl.shader.Shader;
 import dtgl.utils.obj.OBJModel;
 import org.lwjgl.opengl.GL30;
@@ -47,49 +48,64 @@ public final class ModelLoader {
 
 		createAndLoadEBO(indices);
 
-		int posSize = 3, colSize = 4, texSize = 2, vertexSizeBytes = (posSize+colSize+texSize)*Float.BYTES;
+		int posSize = 3;
+		int texSize = 2;
+		int normalSize = 3;
+		int vertexSizeBytes = (posSize+normalSize)*Float.BYTES;
 
 		glVertexAttribPointer(0, posSize, GL_FLOAT, false, vertexSizeBytes, 0);
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(1, colSize, GL_FLOAT, false, vertexSizeBytes, posSize * Float.BYTES);
+		glVertexAttribPointer(1, normalSize, GL_FLOAT, false, vertexSizeBytes, (posSize) * Float.BYTES);
 		glEnableVertexAttribArray(1);
-
-		glVertexAttribPointer(2, texSize, GL_FLOAT, false, vertexSizeBytes, (posSize+colSize) * Float.BYTES);
-		glEnableVertexAttribArray(2);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		return textures == null ? new PrimitiveModel(vao, indices.length, new int[]{0,1,2}, shader) : new TexturedModel(vao, indices.length, textures, new int[]{0,1,2}, shader);
+		return textures == null ? new PrimitiveModel(vao, indices.length, new int[]{0,1}, shader) : new TexturedModel(vao, indices.length, textures, new int[]{0,1}, shader);
 	}
 
 	public Model loadCube(float size, Texture[] textures, Shader shader){
-		float[] cube = {
-				-size, -size,  size, 1.0f, 0.0f, 0.0f, 1, 1.0f, 1.0f,
-				size, -size,  size, 0.0f, 1.0f, 0.0f, 1, 1.0f, 0.0f,
-				size,  size,  size, 0.0f, 0.0f, 1.0f, 1, 0.0f, 0.0f,
-				-size,  size,  size, 1.0f, 1.0f, 1.0f, 1, 0.0f, 1.0f,
 
-				-size, -size, -size, 1.0f, 0.0f, 0.0f, 1, 1.0f, 1.0f,
-				size, -size, -size, 0.0f, 1.0f, 0.0f, 1, 1.0f, 0.0f,
-				size,  size, -size, 0.0f, 0.0f, 1.0f, 1, 0.0f, 0.0f,
-				-size,  size, -size, 1.0f, 1.0f, 1.0f, 1, 0.0f, 1.0f
+		float cube[] = {
+				-size, -size, -size, 0.0f, 0.0f, -1.0f,
+				size, -size, -size, 0.0f, 0.0f, -1.0f,
+				size, size, -size, 0.0f, 0.0f, -1.0f,
+				-size, size, -size, 0.0f, 0.0f, -1.0f,
+
+				-size, -size, size, 0.0f, 0.0f, 1.0f,
+				size, -size, size, 0.0f, 0.0f, 1.0f,
+				size, size, size, 0.0f, 0.0f, 1.0f,
+				-size, size, size, 0.0f, 0.0f, 1.0f,
+
+				-size, size, size, -1.0f, 0.0f, 0.0f,
+				-size, size, -size, -1.0f, 0.0f, 0.0f,
+				-size, -size, -size, -1.0f, 0.0f, 0.0f,
+				-size, -size, size, -1.0f, 0.0f, 0.0f,
+
+				size, size, size, 1.0f, 0.0f, 0.0f,
+				size, size, -size, 1.0f, 0.0f, 0.0f,
+				size, -size, -size, 1.0f, 0.0f, 0.0f,
+				size, -size, size, 1.0f, 0.0f, 0.0f,
+
+				-size, -size, -size, 0.0f, -1.0f, 0.0f,
+				size, -size, -size, 0.0f, -1.0f, 0.0f,
+				size, -size, size, 0.0f, -1.0f, 0.0f,
+				-size, -size, size, 0.0f, -1.0f, 0.0f,
+
+				-size, size, -size, 0.0f, 1.0f, 0.0f,
+				size, size, -size, 0.0f, 1.0f, 0.0f,
+				size, size, size, 0.0f, 1.0f, 0.0f,
+				-size, size, size, 0.0f, 1.0f, 0.0f
 		};
 
 		int[] cubeElements = {
-				// front
-				0, 1, 2,2, 3, 0,
-				// right
-				1, 5, 6,6, 2, 1,
-				// back
-				7, 6, 5,5, 4, 7,
-				// left
-				4, 0, 3,3, 7, 4,
-				// bottom
-				4, 5, 1,1, 0, 4,
-				// top
-				3, 2, 6,6, 7, 3
+				0,1,2,2,3,0,
+				4,5,6,6,7,4,
+				8,9,10,10,11,8,
+				12,13,14,14,15,12,
+				16,17,18,18,19,16,
+				20,21,22,22,23,20
 		};
 
 		return this.load(cube, cubeElements, textures, shader);

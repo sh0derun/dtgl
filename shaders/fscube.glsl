@@ -1,15 +1,33 @@
 #version 330 core
+
+#include<material.glsl>
+#include<pointlight.glsl>
+
 out vec4 FragColor;
-  
-in vec4 outColor;
-in vec2 outTex;
 
-//uniform float time;
-uniform vec2 resolution;
+in vec3 position;
+in vec3 normal;
 
-uniform sampler2D texture2;
+uniform Material model_material;
+uniform PointLight point_light;
+
+
+vec3 getPhongMaterial(PointLight pointLight, float shininess){
+    vec3 ambientComponent =  vec3((0.212671f*model_material.ambient.r + 0.715160f*model_material.ambient.g + 0.072169f*model_material.ambient.b)/(0.212671f*model_material.diffuse.r + 0.715160f*model_material.diffuse.g + 0.072169f*model_material.diffuse.b));//model_material.ambient;
+    ambientComponent *= model_material.ambient;
+    vec3 lightDir = normalize(pointLight.position - position);
+    float normalLightAngle = max(0, dot(normal, lightDir));
+    vec3 diffuseComponent = model_material.diffuse * pointLight.color * normalLightAngle;
+
+    vec3 from_light_source = -lightDir;
+    vec3 reflected_light = normalize(reflect(from_light_source, normal));
+    float specularFactor = pow(max(0, dot(normalize(-position), reflected_light)), model_material.shininess);
+    vec3 specularComponent = model_material.specular * specularFactor * pointLight.color;
+
+    return vec3(ambientComponent + diffuseComponent + specularComponent);
+}
 
 void main() {
-	vec2 uv = (gl_FragCoord.xy / resolution)*2.0-1.0;
-    FragColor = outColor;//texture(texture2, outTex);//outColor;//*outColor*mod(sin((uv.x*uv.y)*145235.213997)*9214.2158, 1.0);//*(sin(time*uv.x)*0.5+0.5)*mod(uv.y*uv.x, 2.0);
+    vec3 phongRes = getPhongMaterial(point_light, 64);
+    FragColor = vec4(phongRes, 1);
 }

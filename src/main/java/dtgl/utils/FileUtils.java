@@ -12,10 +12,19 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FileUtils {
+
+	/*key = included_file, value = include_content*/
+	private static final Map<String, String> includeLookup;
+
+	static {
+		includeLookup = new HashMap<>();
+	}
 
 	private FileUtils(){}
 	
@@ -23,9 +32,16 @@ public class FileUtils {
 		String fileContent = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(path));
-			fileContent = reader.lines().reduce(
-				(acc, curr) -> acc+"\n"+(curr.startsWith("#include") ? includeProcessor(curr) : curr)
-			).orElse(null);
+			fileContent = reader.lines().reduce((acc, curr) -> {
+				if(curr.startsWith("#include")){
+					try {
+						curr = includeProcessor(curr);
+					} catch (FileNotFoundException e) {
+						System.out.println(e.getMessage());
+					}
+				}
+				return acc+"\n"+curr;
+			}).orElse(null);
 			reader.close();
 		} catch (IOException e) {
 			System.out.println("cannot load file "+path+" !");
@@ -34,20 +50,27 @@ public class FileUtils {
 		return fileContent;
 	}
 
-	private static String includeProcessor(String includeStatement) {
+	private static String includeProcessor(String includeStatement) throws FileNotFoundException{
 		String res = "";
 		String include = includeStatement.trim();
 		int s = include.indexOf('<') + 1;
 		int e = include.indexOf('>');
 		include = include.substring(s, e);
 		URL resource = ClassLoader.getSystemResource(include);
-		try (BufferedReader resourceReader = new BufferedReader(new FileReader(resource.getPath()))) {
-			res = resourceReader.lines().collect(Collectors.joining("\n"));
-		} catch (FileNotFoundException ex) {
-			System.out.println(include + " : no such  file or directory");
-		} catch (IOException ioException) {
-			System.out.println("cannot load file "+include+" !");
-			System.out.println(ioException.getMessage());
+		if(resource == null){
+			throw new FileNotFoundException(include + " : no such  file or directory");
+		}
+		if(!includeLookup.containsKey(include)){
+			try (BufferedReader resourceReader = new BufferedReader(new FileReader(resource.getPath()))) {
+				res = resourceReader.lines().collect(Collectors.joining("\n"));
+				includeLookup.put(include, res);
+			} catch (IOException ioException) {
+				System.out.println("cannot load file "+include+" !");
+				System.out.println(ioException.getMessage());
+			}
+		}
+		else{
+			res = includeLookup.get(include);
 		}
 		return res;
 	}

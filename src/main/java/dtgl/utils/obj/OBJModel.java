@@ -1,5 +1,7 @@
 package dtgl.utils.obj;
 
+import java.util.Arrays;
+
 public class OBJModel{
     float[] positions;
     float[] textureCoords;
@@ -28,5 +30,15 @@ public class OBJModel{
 
     public int[] getIndices() {
         return indices;
+    }
+
+    @Override
+    public String toString() {
+        return "OBJModel{" +
+                "positions=" + Arrays.toString(positions) +
+                ", textureCoords=" + Arrays.toString(textureCoords) +
+                ", normals=" + Arrays.toString(normals) +
+                ", indices=" + Arrays.toString(indices) +
+                '}';
     }
 }

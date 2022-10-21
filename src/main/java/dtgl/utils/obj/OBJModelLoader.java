@@ -14,20 +14,20 @@ import java.util.stream.Collectors;
 import dtgl.math.Vec2;
 import dtgl.math.Vec3;
 
-class FaceGroup{
-	int positionIndex;
-	int textureIndex;
-	int normalIndex;
-
-	FaceGroup(int pid, int tid, int nid){
-		positionIndex = pid;
-		textureIndex = tid;
-		normalIndex = nid;
-	}
-}
-
 class Face{
 	FaceGroup[] faceGroups = new FaceGroup[3];
+
+	static class FaceGroup{
+		int positionIndex;
+		int textureIndex;
+		int normalIndex;
+
+		FaceGroup(int pid, int tid, int nid){
+			positionIndex = pid;
+			textureIndex = tid;
+			normalIndex = nid;
+		}
+	}
 }
 
 public class OBJModelLoader {
@@ -35,9 +35,10 @@ public class OBJModelLoader {
 	public static OBJModel LoadModelDataFromOBJ(String OBJFileName) {
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(new File(OBJFileName)));
+			reader = new BufferedReader(new FileReader(OBJFileName));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(OBJFileName + " : No such obj file");
+			System.out.println(e.getMessage());
 		}
 
 		List<Vec3> positions = new ArrayList<>();
@@ -85,7 +86,7 @@ public class OBJModelLoader {
 									nid = groupIndices[2].length() == 0 ? -1 : Integer.parseInt(groupIndices[2]) - 1;
 								}
 							}
-							face.faceGroups[i] = new FaceGroup(pid, tid, nid);
+							face.faceGroups[i] = new Face.FaceGroup(pid, tid, nid);
 						}
 						faces.add(face);
 					}
@@ -126,7 +127,7 @@ public class OBJModelLoader {
 		int i = 0;
 
 		for(Face face : faces){
-			for(FaceGroup faceGroup : face.faceGroups){
+			for(Face.FaceGroup faceGroup : face.faceGroups){
 				int positionIndex = faceGroup.positionIndex;
 				indicesArray[i++] = positionIndex;
 

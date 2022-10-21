@@ -42,10 +42,10 @@ public class Main {
 				new Vec3(0.628281f, 0.555802f, 0.366065f),51.2f);
 
 		EngineSetup engineSetup = (ModelLoader modelLoader)->{
-			Shader shader = new Shader("shaders/vs_icosphere.glsl", "shaders/fs_icosphere.glsl");
-			OBJModel objModel = OBJModelLoader.LoadModelDataFromOBJ("res/icosphere_per_vertex_normals.obj");
-			Model model = modelLoader.load(objModel, null, shader);
-			model.setScale(0.6f);
+			Shader shader = new Shader("shaders/vs.glsl", "shaders/fscube.glsl");
+			OBJModel objModel = OBJModelLoader.LoadModelDataFromOBJ("res/cube_flat.obj");
+			Model model = modelLoader.loadCube(0.5f, null, shader);
+//			model.setScale(2f);
 			models.add(model);
 			return models;
 		};
@@ -57,7 +57,7 @@ public class Main {
 						for(int k = 0; k < 4; k++) {
 							model.setPos(new Vec3((i - 1.5f) * 2, (j - 1.5f) * 2, (k - 1.5f) * 2));
 							model.setRot(new Vec3(time * 5, time * 10, time * 15));
-							Uniform modelColor = new Uniform(UniformType.PHONG_MATERIAL, "model_material", /*material*/renderedModelsColors[j + i + k * 3]);
+							Uniform modelColor = new Uniform(UniformType.PHONG_MATERIAL, "model_material", renderedModelsColors[j + i + k * 3]);
 							model.setUniforms(Arrays.asList(modelColor));
 							renderer.render(model);
 						}

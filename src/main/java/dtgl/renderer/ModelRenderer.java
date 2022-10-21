@@ -1,7 +1,6 @@
 package dtgl.renderer;
 
 import dtgl.display.Window;
-import dtgl.engine.component.Light;
 import dtgl.engine.component.PointLight;
 import dtgl.math.Mat4;
 import dtgl.math.Vec3;
@@ -75,15 +74,9 @@ public class ModelRenderer extends AbstractRenderer{
 			Uniform light = new Uniform(UniformType.POINT_LIGHT,
 										"point_light",
 										new PointLight(new Vec3(1, 1, 1),
-										new Vec3((float) (Math.cos(time) * radius), 0, (float) (Math.sin(time) * radius) + 10)));
+										new Vec3(0,0,7/*(float) (Math.cos(time) * radius), 0, (float) (Math.sin(time) * radius) + 10*/)));
 
 			requiredUniforms.add(light);
-
-			/*Uniform lightColor = new Uniform(UniformType.VEC3, "light_color", new Vec3(1, 1, 1));
-			requiredUniforms.add(lightColor);
-
-			Uniform lightPos = new Uniform(UniformType.VEC3, "light_pos", new Vec3(0, 0, 7)*//*new Vec3((float) (Math.cos(time) * 5), (float) (Math.sin(time) * 5), 7)*//*);
-			requiredUniforms.add(lightPos);*/
 
 			requiredUniforms.addAll(uniforms);
 		}
