@@ -37,30 +37,28 @@ public class Main {
 			renderedModelsColors[i] = PhongMaterialConstants.materials[rnd.nextInt(PhongMaterialConstants.materials.length)];
 		}
 
-		PhongMaterial material = new PhongMaterial("gold", new Vec3(0.24725f,0.1995f,0.0745f),
-				new Vec3(0.75164f, 0.60648f,	0.22648f),
-				new Vec3(0.628281f, 0.555802f, 0.366065f),51.2f);
-
 		EngineSetup engineSetup = (ModelLoader modelLoader)->{
 			Shader shader = new Shader("shaders/vs.glsl", "shaders/fscube.glsl");
-			OBJModel objModel = OBJModelLoader.LoadModelDataFromOBJ("res/cube_flat.obj");
-			Model model = modelLoader.loadCube(0.5f, null, shader);
-//			model.setScale(2f);
-			models.add(model);
+			Shader shaderIcosphere = new Shader("shaders/vs_icosphere.glsl", "shaders/fs_icosphere.glsl");
+			OBJModel objModel = OBJModelLoader.LoadModelDataFromOBJ("res/icosphere_per_vertex_normals.obj");
+			Model cubeModel = modelLoader.loadCube(0.5f, null, shader);
+			Model icosphereModel = modelLoader.load(objModel, null, shaderIcosphere);
+			icosphereModel.setScale(0.8f);
+			models.addAll(Arrays.asList(cubeModel, icosphereModel));
 			return models;
 		};
 
-		EngineLogic engineLogic = (AbstractRenderer renderer, float time)->{
-			for (Model model : models) {
-				for(int i = 0; i < 4; i++) {
-					for(int j = 0; j < 4; j++) {
-						for(int k = 0; k < 4; k++) {
-							model.setPos(new Vec3((i - 1.5f) * 2, (j - 1.5f) * 2, (k - 1.5f) * 2));
-							model.setRot(new Vec3(time * 5, time * 10, time * 15));
-							Uniform modelColor = new Uniform(UniformType.PHONG_MATERIAL, "model_material", renderedModelsColors[j + i + k * 3]);
-							model.setUniforms(Arrays.asList(modelColor));
-							renderer.render(model);
-						}
+		EngineLogic engineLogic = (AbstractRenderer renderer, float time) -> {
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 4; j++) {
+					for (int k = 0; k < 4; k++) {
+						Model model = models.get((j + i + k) % models.size());
+						float offset = 1.5f;
+						model.setPos(new Vec3((i - offset) * 2, (j - offset) * 2, (k - offset) * 2));
+						model.setRot(new Vec3(time * 5, time * 10, time * 15));
+						Uniform modelColor = new Uniform(UniformType.PHONG_MATERIAL, "model_material", renderedModelsColors[j + i + k * 3]);
+						model.setUniforms(Arrays.asList(modelColor));
+						renderer.render(model);
 					}
 				}
 			}
