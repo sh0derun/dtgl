@@ -1,7 +1,9 @@
 package dtgl.utils.obj;
 
+import dtgl.math.Vec2;
+import dtgl.math.Vec3;
+
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,9 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import dtgl.math.Vec2;
-import dtgl.math.Vec3;
 
 class Face{
 	FaceGroup[] faceGroups = new FaceGroup[3];
@@ -41,6 +40,7 @@ public class OBJModelLoader {
 			System.out.println(e.getMessage());
 		}
 
+		String name = "";
 		List<Vec3> positions = new ArrayList<>();
 		List<Vec3> normals = new ArrayList<>();
 		List<Vec2> textureCoords = new ArrayList<>();
@@ -53,10 +53,13 @@ public class OBJModelLoader {
 			String line = null;
 			while((line = reader.readLine()) != null) {
 				switch(line.substring(0, 2)) {
+					case "o ":{
+						name = line.substring(2);
+					}
+					break;
 					case "v ":{
 						String[] cds = line.substring(2).split(" ");
-						Vec3 vertex = convertLineToVec3.apply(cds);
-						positions.add(vertex);
+						positions.add(convertLineToVec3.apply(cds));
 					}
 					break;
 					case "vn":{
@@ -66,8 +69,7 @@ public class OBJModelLoader {
 					break;
 					case "vt":{
 						String[] cds = line.substring(3).split(" ");
-						Vec2 vec2 = new Vec2(Float.parseFloat(cds[0]), Float.parseFloat(cds[1]));
-						textureCoords.add(vec2);
+						textureCoords.add(new Vec2(Float.parseFloat(cds[0]), Float.parseFloat(cds[1])));
 					}
 					break;
 					case "f ":{
@@ -147,7 +149,7 @@ public class OBJModelLoader {
 			}
 		}
 
-		return new OBJModel(positionsArray, textureCoordsArray, normalsArray, indicesArray);
+		return new OBJModel(name, positionsArray, textureCoordsArray, normalsArray, indicesArray);
 	}
 	
 }
