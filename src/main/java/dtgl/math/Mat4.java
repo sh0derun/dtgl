@@ -122,16 +122,6 @@ public class Mat4 {
 		transformation = Mat4.translate(translation).mult(transformation);
 		return transformation;
 	}
-
-	public static Matrix4f getTransformationMat(Vec3 translation, Vec3 rotation, float scale) {
-		Matrix4f trans = new Matrix4f();
-		trans.translate(translation.coords[0],translation.coords[1],translation.coords[2],trans);
-		trans.rotate(rotation.coords[0],new Vector3f(1,0,0),trans);
-		trans.rotate(rotation.coords[1],new Vector3f(0,1,0),trans);
-		trans.rotate(rotation.coords[2],new Vector3f(0,0,1),trans);
-		trans.scale(scale, scale, scale, trans);
-		return trans;
-	}
 	
 	public static Mat4 perspective(float fov, float aspect, float near, float far) {
 		double halfpi = Math.PI * 0.5;
@@ -190,23 +180,32 @@ public class Mat4 {
 	public static Mat4 lookAt(Vec3 camera, Vec3 target, Vec3 up){
 		Mat4 result = Mat4.identity();
 
-		Vec3 f = target.sub(camera).normalize();
-		Vec3 s = f.cross(up.normalize());
-		Vec3 u = s.cross(f);
+		Vec3 z = camera.sub(target).normalize();
+		Vec3 x = up.cross(z).normalize();
+		Vec3 y = z.cross(x).normalize();
 
-		result.values[0 + 0 * 4] = s.getCoords()[0];
-		result.values[0 + 1 * 4] = s.getCoords()[1];
-		result.values[0 + 2 * 4] = s.getCoords()[2];
+		Vec3 invCamera = camera.mult(-1);
+		float dotx = x.dot(invCamera);
+		float doty = y.dot(invCamera);
+		float dotz = z.dot(invCamera);
 
-		result.values[1 + 0 * 4] = u.getCoords()[0];
-		result.values[1 + 1 * 4] = u.getCoords()[1];
-		result.values[1 + 2 * 4] = u.getCoords()[2];
+		result.values[0] = x.getCoords()[0];
+		result.values[1] = y.getCoords()[0];
+		result.values[2] = z.getCoords()[0];
 
-		result.values[2 + 0 * 4] = -f.getCoords()[0];
-		result.values[2 + 1 * 4] = -f.getCoords()[1];
-		result.values[2 + 2 * 4] = -f.getCoords()[2];
+		result.values[4] = x.getCoords()[1];
+		result.values[5] = y.getCoords()[1];
+		result.values[6] = z.getCoords()[1];
 
-		return result.mult(Mat4.translate(new Vec3(-camera.getCoords()[0], -camera.getCoords()[1], -camera.getCoords()[2])));
+		result.values[8] = x.getCoords()[2];
+		result.values[9] = y.getCoords()[2];
+		result.values[10] = z.getCoords()[2];
+
+		result.values[12] = dotx;
+		result.values[13] = doty;
+		result.values[14] = dotz;
+
+		return result;
 	}
 
 	public String toString() {
