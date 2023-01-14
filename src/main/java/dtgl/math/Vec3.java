@@ -15,6 +15,10 @@ public class Vec3 extends Vec{
 	public Vec3() {
 		this.coords = new float[3];
 	}
+
+	public Vec3(Vec3 v) {
+		this.coords = new float[]{v.getCoords()[0],v.getCoords()[1],v.getCoords()[2]};
+	}
 	
 	public Vec3(float x, float y, float z) {
 		this.coords = new float[]{x,y,z};
@@ -83,15 +87,14 @@ public class Vec3 extends Vec{
 	}
 
 	public Vec3 normalize() {
-		float length = this.length();
-		for(int i = 0; i < coords.length; coords[i] /= length,i++);
-		return this;
+		Vec3 res = new Vec3(this);
+		float invLength = 1.f/this.length();
+		for(int i = 0; i < coords.length; res.coords[i] *= invLength,i++);
+		return res;
 	}
 
-	public double dot(Vec3 vec) {
-		float sum = 0.0f;
-		for(int i = 0; i < coords.length; sum += coords[i] * vec.coords[i],i++);
-		return sum;
+	public float dot(Vec3 vec) {
+		return coords[0] * vec.coords[0] + coords[1] * vec.coords[1] + coords[2] * vec.coords[2];
 	}
 
 	public float[] getCoords() {
@@ -101,11 +104,11 @@ public class Vec3 extends Vec{
 	public String toString() {
 		return "Vec3 [coords=" + Arrays.toString(coords) + "]";
 	}
-	
+
 	public Vec3 cross(Vec3 vec) {
-		return new Vec3(coords[1]*vec.coords[2] - coords[2]*vec.coords[1],
-						coords[0]*vec.coords[2] - coords[2]*vec.coords[0],
-						coords[0]*vec.coords[1] - coords[1]*vec.coords[0]);
+		return new Vec3(coords[1] * vec.coords[2] - coords[2] * vec.coords[1],
+						coords[2] * vec.coords[0] - coords[0] * vec.coords[2],
+						coords[0] * vec.coords[1] - coords[1] * vec.coords[0]);
 	}
 
 }
