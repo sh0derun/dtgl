@@ -14,6 +14,8 @@ A 3D java engine.
 1. LWJGL(Lightweight Java Game Library)
 2. GLFW for handeling window events
 
-## Screneshots
+## Demo
 
-![demo](demo.gif)
+
+
+
