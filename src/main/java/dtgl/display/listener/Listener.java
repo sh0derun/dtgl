@@ -29,6 +29,8 @@ public class Listener {
 	}
 	
 	public void key_callback(long window, int key, int scancode, int action, int mods) {
+		if(key == -1)
+			return;
 		getInstance().keyboardBtnStates[key] = action != GLFW.GLFW_RELEASE;
 	}
 	
