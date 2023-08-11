@@ -40,8 +40,8 @@ public class Shader {
 	private Map<String, Integer> locationsMap = new HashMap<>();
 
 	public Shader(String vsPath, String fsPath) {
-		this.vsPath = vsPath;
-		this.fsPath = fsPath;
+		this.vsPath = FileUtils.getPath(vsPath).getPath();
+		this.fsPath = FileUtils.getPath(fsPath).getPath();
 		this.inError = false;
 		this.programId = loadShaders(this.vsPath, this.fsPath);
 	}

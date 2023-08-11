@@ -1,8 +1,5 @@
 package dtgl.math;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import java.util.Arrays;
 
 /*REMEMBER THAT MATRICES NEEDS TO BE WRITTEN AS TRANSPOSED

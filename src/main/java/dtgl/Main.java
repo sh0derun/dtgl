@@ -37,6 +37,8 @@ public class Main {
 			renderedModelsColors[i] = PhongMaterialConstants.materials[rnd.nextInt(PhongMaterialConstants.materials.length)];
 		}
 
+		System.out.println(Arrays.toString(PhongMaterialConstants.class.getFields()));
+
 		EngineSetup engineSetup = (ModelLoader modelLoader)->{
 			Shader shader = new Shader("shaders/vs.glsl", "shaders/fscube.glsl");
 			Shader shaderIcosphere = new Shader("shaders/vs_icosphere.glsl", "shaders/fs_icosphere.glsl");

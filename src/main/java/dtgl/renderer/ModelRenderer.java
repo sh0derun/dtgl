@@ -6,12 +6,10 @@ import dtgl.math.Mat4;
 import dtgl.math.Vec3;
 import dtgl.model.Camera;
 import dtgl.model.Model;
-import dtgl.model.Texture;
 import dtgl.shader.DefaultUniformsHandler;
 import dtgl.shader.Shader;
 import dtgl.shader.Uniform;
 import dtgl.shader.UniformType;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -19,7 +17,6 @@ import org.lwjgl.opengl.GL30;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class ModelRenderer extends AbstractRenderer{

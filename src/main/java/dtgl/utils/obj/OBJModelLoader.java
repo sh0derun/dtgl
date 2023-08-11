@@ -2,6 +2,7 @@ package dtgl.utils.obj;
 
 import dtgl.math.Vec2;
 import dtgl.math.Vec3;
+import dtgl.utils.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -33,10 +34,11 @@ public class OBJModelLoader {
 
 	public static OBJModel LoadModelDataFromOBJ(String OBJFileName) {
 		BufferedReader reader = null;
+		String path = FileUtils.getPath(OBJFileName).getPath();
 		try {
-			reader = new BufferedReader(new FileReader(OBJFileName));
+			reader = new BufferedReader(new FileReader(path));
 		} catch (FileNotFoundException e) {
-			System.out.println(OBJFileName + " : No such obj file");
+			System.out.println(path + " : No such obj file");
 			System.out.println(e.getMessage());
 		}
 
@@ -50,7 +52,7 @@ public class OBJModelLoader {
 			Function<List<Float>, Vec3> floatsToVec3 = floats -> new Vec3(floats.get(0), floats.get(1), floats.get(2));
 			Function<String[], Vec3> convertLineToVec3 = str -> floatsToVec3.apply(Arrays.stream(str).map(stringToFloat).collect(Collectors.toList()));
 
-			String line = null;
+			String line;
 			while((line = reader.readLine()) != null) {
 				switch(line.substring(0, 2)) {
 					case "o ":{
@@ -79,7 +81,7 @@ public class OBJModelLoader {
 							String group = groups[i];
 							String[] groupIndices = group.split("/");
 							int pid = Integer.parseInt(groupIndices[0]) - 1;
-							//Both texture and normal ids can be optional in OBJ file
+							/*Both texture and normal ids can be optional in OBJ file*/
 							int tid = -1;
 							int nid = -1;
 							if(groupIndices.length > 1){
@@ -105,18 +107,10 @@ public class OBJModelLoader {
 			}
 		}
 
-		//Reordering positions, texture coords and normals and constructing indices array
-		
-		System.out.println("positions count = " + positions.size());
-		System.out.println("normals count = " + normals.size());
-		System.out.println("textures coords count = " + textureCoords.size());
-		System.out.println("faces count = " + faces.size());
-
+		/*Reordering positions, texture coords and normals and constructing indices array*/
 		float[] positionsArray = new float[positions.size() * 3];
 		float[] textureCoordsArray = new float[positions.size() * 2];
 		float[] normalsArray = new float[positions.size() * 3];
-
-		List<Integer> indices = new ArrayList<>();
 
 		for(int i = 0; i < positions.size(); i++){
 			Vec3 position = positions.get(i);

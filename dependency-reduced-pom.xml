@@ -5,6 +5,19 @@
   <artifactId>dtgl</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <build>
+    <resources>
+      <resource>
+        <targetPath>shaders</targetPath>
+        <directory>shaders</directory>
+      </resource>
+      <resource>
+        <targetPath>res</targetPath>
+        <directory>res</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
@@ -80,7 +93,6 @@
     <java.version>1.8</java.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <lwjgl.natives>natives-windows</lwjgl.natives>
-    <joml.version>1.9.6</joml.version>
     <lwjgl.version>3.2.3</lwjgl.version>
   </properties>
 </project>

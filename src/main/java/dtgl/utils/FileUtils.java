@@ -10,11 +10,10 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class FileUtils {
@@ -56,7 +55,7 @@ public class FileUtils {
 		int s = include.indexOf('<') + 1;
 		int e = include.indexOf('>');
 		include = include.substring(s, e);
-		URL resource = ClassLoader.getSystemResource(include);
+		URL resource = getPath(include);
 		if(resource == null){
 			throw new FileNotFoundException(include + " : no such  file or directory");
 		}
@@ -109,6 +108,10 @@ public class FileUtils {
 				displayMetadata((IIOMetadataNode) item);
 			}
 		}
+	}
+
+	public static URL getPath(String resourcePath) {
+		return Objects.requireNonNull(FileUtils.class.getClassLoader().getResource(resourcePath));
 	}
 
 }
