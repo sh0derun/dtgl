@@ -30,7 +30,7 @@ public class Shader {
 
 	private static final String ERROR_VS = "shaders/VS_ERROR.glsl";
 	private static final String ERROR_FS = "shaders/FS_ERROR.glsl";
-	public static final Vec4 ERROR_COLOR = new Vec4(0,1,0,1);
+	public static final Vec4 ERROR_COLOR = new Vec4(1,0,0,1);
 
 	private int programId;
 	private String vsPath, fsPath;
@@ -153,5 +153,13 @@ public class Shader {
 
 	public void deactivate() {
 		glUseProgram(0);
+	}
+
+	@Override
+	public String toString() {
+		return "Shader{" +
+				"\n\tvsPath='" + vsPath + '\'' +
+				", \n\tfsPath='" + fsPath + '\'' +
+				'}';
 	}
 }

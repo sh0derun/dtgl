@@ -14,6 +14,6 @@ uniform PointLight point_light;
 
 
 void main() {
-    vec3 phongRes = getPhongMaterial(model_material.ambient, model_material.diffuse, model_material.specular, model_material.shininess, point_light, outPosition, outNormal);
+    vec3 phongRes = getPhongMaterial(model_material, point_light, outPosition, outNormal);
     FragColor = vec4(phongRes, 1);
 }

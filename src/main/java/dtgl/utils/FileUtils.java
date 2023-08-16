@@ -1,5 +1,6 @@
 package dtgl.utils;
 
+import dtgl.exception.ApplicationRuntimeException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -28,10 +29,11 @@ public class FileUtils {
 	private FileUtils(){}
 	
 	public static String loadShaderFile(String path) {
+		includeLookup.clear();
 		String fileContent = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(path));
-			fileContent = reader.lines().reduce((acc, curr) -> {
+			fileContent = reader.lines().reduce("",(acc, curr) -> {
 				if(curr.startsWith("#include")){
 					try {
 						curr = includeProcessor(curr);
@@ -40,7 +42,7 @@ public class FileUtils {
 					}
 				}
 				return acc+"\n"+curr;
-			}).orElse(null);
+			});
 			reader.close();
 		} catch (IOException e) {
 			System.out.println("cannot load file "+path+" !");
@@ -59,17 +61,23 @@ public class FileUtils {
 		if(resource == null){
 			throw new FileNotFoundException(include + " : no such  file or directory");
 		}
-		if(!includeLookup.containsKey(include)){
+		if(includeLookup.containsKey(include)){
+			res = "";
+		} else{
+			//TODO: try do clean error handling
 			try (BufferedReader resourceReader = new BufferedReader(new FileReader(resource.getPath()))) {
-				res = resourceReader.lines().collect(Collectors.joining("\n"));
+				res = resourceReader.lines().reduce("", (acc, curr) ->{
+					try {
+						return curr.startsWith("#include") ? includeProcessor(curr) : acc + "\n"+ curr;
+					} catch (FileNotFoundException ex) {
+						throw new ApplicationRuntimeException(ex.getLocalizedMessage());
+					}
+				});
 				includeLookup.put(include, res);
 			} catch (IOException ioException) {
 				System.out.println("cannot load file "+include+" !");
 				System.out.println(ioException.getMessage());
 			}
-		}
-		else{
-			res = includeLookup.get(include);
 		}
 		return res;
 	}
